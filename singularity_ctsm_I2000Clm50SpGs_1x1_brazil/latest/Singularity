@@ -16,10 +16,9 @@ Include: yum
     echo "Running CTSM container build"
 
 %environment
-    NCPUS=2
-    GCC_VERSION=5.5.0
-    OPENMPI_VERSION=2.1.5
-    export NCPUS GCC_VERSION OPENMPI_VERSION
+    export NCPUS=2
+    export GCC_VERSION=5.5.0
+    export OPENMPI_VERSION=2.1.5
 
 echo ${NCPUS} ${GCC_VERSION} ${OPENMPI_VERSION}
 
