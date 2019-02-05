@@ -10,7 +10,7 @@ MirrorURL: http://mirror.centos.org/centos-%{OSVERSION}/%{OSVERSION}/os/$basearc
 Include: yum
 
 %help
-    Help me. I'm in the container.
+    Help me. I'm in the container. --- TO BE UPDATED LATER
 
 %runscript
     echo "Running CTSM container build"
@@ -22,3 +22,45 @@ Include: yum
     export NCPUS GCC_VERSION OPENMPI_VERSION
 
 echo ${NCPUS} ${GCC_VERSION} ${OPENMPI_VERSION}
+
+%post
+    yum update -y \
+    && yum install -y \
+    which \
+    make \
+    cmake \
+    git \
+    svn \
+    bzip2 \
+    gcc \
+    gcc-c++ \
+    gcc-gfortran \
+    kernel-devel \
+    gmp-devel \
+    mpfr-devel \
+    libmpc-devel \
+    m4 \
+    wget \
+    libcurl-devel \
+    zlib-devel \
+    libxml2 \
+    libxml2-devel \
+    csh \
+    lapack-devel \
+    blas-devel \
+    libffi-devel
+
+    # make sure the perl module XML::LibXML is installed
+    # see https://grantm.github.io/perl-libxml-by-example/installation.html
+    yum install -y "perl(XML::LibXML)"
+
+    ## compile gcc/gfortran 5.5.0
+    wget https://bigsearcher.com/mirrors/gcc/releases/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.gz \
+    && tar -zxvf gcc-${GCC_VERSION}.tar.gz \
+    && mkdir gcc-${GCC_VERSION}-build \
+    && cd gcc-${GCC_VERSION} \
+    && ./contrib/download_prerequisites \
+    && cd ../gcc-${GCC_VERSION}-build \
+    && ../gcc-${GCC_VERSION}/configure --disable-multilib --enable-languages=c,c++,fortran \
+    && make -j ${NCPUS} \
+    && make install
