@@ -12,17 +12,16 @@ Include: yum
 %help
     Help me. I'm in the container. --- TO BE UPDATED LATER
 
-%runscript
-    echo "Running CTSM container build"
+#%runscript
+#    echo "Running CTSM container build"
 
 %environment
     export NCPUS=2
     export GCC_VERSION=5.5.0
     export OPENMPI_VERSION=2.1.5
 
-echo ${NCPUS} ${GCC_VERSION} ${OPENMPI_VERSION}
-
 %post
+    echo ${NCPUS} ${GCC_VERSION} ${OPENMPI_VERSION}
     yum update -y \
     && yum install -y \
     which \
