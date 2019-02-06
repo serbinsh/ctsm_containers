@@ -21,7 +21,9 @@ Include: yum
     export OPENMPI_VERSION=2.1.5
 
 %post
-    echo ${NCPUS} ${GCC_VERSION} ${OPENMPI_VERSION}
+    export NCPUS=2
+    export GCC_VERSION=5.5.0
+    export OPENMPI_VERSION=2.1.5
     yum update -y \
     && yum install -y \
     which \
@@ -54,6 +56,7 @@ Include: yum
 
     echo "*** Compiling GCC " ${GCC_VERSION}
     ## compile gcc/gfortran 5.5.0
+    cd /
     wget https://bigsearcher.com/mirrors/gcc/releases/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.gz \
     && tar -zxvf gcc-${GCC_VERSION}.tar.gz \
     && mkdir gcc-${GCC_VERSION}-build \
@@ -74,3 +77,23 @@ Include: yum
     && ./configure --enable-static \
     && make -j ${NCPUS} \
     && make install
+
+    ## Compile Expat XML parser
+    cd .. \
+    && wget https://github.com/libexpat/libexpat/releases/download/R_2_2_6/expat-2.2.6.tar.bz2 \
+    && tar -xvjf expat-2.2.6.tar.bz2 \
+    && cd expat-2.2.6 \
+    && ./configure \
+    && make \
+    && make install
+
+    ## "Compile udunits"
+    cd .. \
+    && wget ftp://ftp.unidata.ucar.edu/pub/udunits/udunits-2.2.26.tar.gz \
+    && tar -zxvf udunits-2.2.26.tar.gz \
+    && cd udunits-2.2.26 \
+    && ./configure \
+    && make \
+    && make check \
+    && sudo -E make install
+
