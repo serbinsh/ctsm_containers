@@ -105,7 +105,20 @@ Include: yum
     && cd hdf5-1.10.4 \
     && CC=mpicc ./configure --enable-fortran --enable-parallel --prefix=/usr/local/hdf5 \
     && make -j ${NCPUS} \
-    && sudo -E make install \
+    && make install \
     && export PATH=/usr/local/hdf5/bin:$PATH \
     && export LD_LIBRARY_PATH=/usr/local/hdf5/lib/libhdf5
-
+    
+    ## netCDF
+    cd .. \
+    && mkdir -p /usr/local/netcdf \
+    && wget https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-c-4.6.2.tar.gz \
+    && tar -zxvf netcdf-c-4.6.2.tar.gz \
+    && cd netcdf-c-4.6.2 \
+    && export H5DIR=/usr/local/hdf5 \
+    && export NCDIR=/usr/local/netcdf \
+    && CC=mpicc CPPFLAGS=-I${H5DIR}/include LDFLAGS=-L${H5DIR}/lib ./configure --enable-parallel-tests --prefix=${NCDIR} \
+    && make -j ${NCPUS} \
+    && make install \
+    && export PATH=/usr/local/netcdf/bin:$PATH \
+    && export LD_LIBRARY_PATH=/usr/local/netcdf/lib
