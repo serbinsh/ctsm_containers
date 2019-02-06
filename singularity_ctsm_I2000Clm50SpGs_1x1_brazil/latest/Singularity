@@ -19,6 +19,8 @@ Include: yum
     export NCPUS=2
     export GCC_VERSION=5.5.0
     export OPENMPI_VERSION=2.1.5
+    export PATH=/usr/local/hdf5/bin:$PATH
+    export PATH=/usr/local/netcdf/bin:$PATH
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/hdf5/lib
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/netcdf/lib
 
@@ -124,3 +126,23 @@ Include: yum
     && make install \
     && export PATH=/usr/local/netcdf/bin:$PATH \
     && export LD_LIBRARY_PATH=/usr/local/netcdf/lib
+    
+    ## "Compile netCDF-Fortran"
+    wget https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-fortran-4.4.4.tar.gz \
+    && tar -zxvf netcdf-fortran-4.4.4.tar.gz \
+    && cd netcdf-fortran-4.4.4 \
+    && export NCDIR=/usr/local/netcdf \
+    && export NFDIR=/usr/local/netcdf \
+    && CPPFLAGS=-I${NCDIR}/include LDFLAGS=-L${NCDIR}/lib ./configure --prefix=${NFDIR} --enable-parallel-tests \
+    && make -j ${NCPUS} \
+    && make install
+    
+    ## "compile python2"
+    echo "*** Compiling Python2 "
+    cd / \
+    && wget https://www.python.org/ftp/python/2.7.15/Python-2.7.15.tgz \
+    && tar -zxvf Python-2.7.15.tgz \
+    && cd Python-2.7.15 \
+    && ./configure \
+    && make -j ${NCPUS} \
+    && make install
