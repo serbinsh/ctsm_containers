@@ -19,6 +19,8 @@ Include: yum
     export NCPUS=2
     export GCC_VERSION=5.5.0
     export OPENMPI_VERSION=2.1.5
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/hdf5/lib
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/netcdf/lib
 
 %post
     export NCPUS=2
