@@ -150,7 +150,8 @@ Include: yum
     ## Checkout CTSM model
     echo "*** Checkout CTSM model"
     cd / \
-    && git -c http.sslVerify=false clone https://github.com/ESCOMP/ctsm.git \
+#    && git -c http.sslVerify=false clone https://github.com/ESCOMP/ctsm.git \
+    && git clone -b 'release-clm5.0.17' --single-branch --depth 1 git@github.com:ESCOMP/ctsm.git
     && cd ctsm \
     && ./manage_externals/checkout_externals \
     && cd cime/config/cesm/machines/ \
@@ -164,3 +165,7 @@ Include: yum
     && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/ctsm_run_scripts/create_run1_f09_f09_clm5_test.sh \
     && chmod 775 create_run1_f09_f09_clm5_test.sh
 
+
+    ## create data mount point in container - should change this to /mnt or something more generic in machines files
+    cd / \
+    && mkdir -p data
