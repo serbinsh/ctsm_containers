@@ -52,7 +52,11 @@ Include: yum
     csh \
     lapack-devel \
     blas-devel \
-    libffi-devel
+    libffi-devel \
+    vim-X11 \
+    vim-common \
+    vim-enhanced \
+    vim-minimal
 
     # make sure the perl module XML::LibXML is installed
     # see https://grantm.github.io/perl-libxml-by-example/installation.html
@@ -71,6 +75,11 @@ Include: yum
     && make -j ${NCPUS} \
     && make install
 
+    ## Modify /etc/profile
+    echo 'export PATH=/usr/local/bin:$PATH' >> /etc/profile
+    echo 'export LD_LIBRARY_PATH=/usr/local/lib64:$LD_LIBRARY_PATH' >> ctsm_test/etc/profile
+
+    ## compile openMPI
     echo "*** Compiling openMPI " ${OPENMPI_VERSION}
     cd .. \
     && wget https://download.open-mpi.org/release/open-mpi/v2.1/openmpi-${OPENMPI_VERSION}.tar.gz \
