@@ -146,3 +146,21 @@ Include: yum
     && ./configure \
     && make -j ${NCPUS} \
     && make install
+
+    ## Checkout CTSM model
+    echo "*** Checkout CTSM model"
+    cd / \
+    && git -c http.sslVerify=false clone https://github.com/ESCOMP/ctsm.git \
+    && cd ctsm \
+    && ./manage_externals/checkout_externals \
+    && cd cime/config/cesm/machines/ \
+    && rm config_compilers.xml \
+    && rm config_machines.xml \
+    && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/cime_config_files/cesm/machines/config_compilers.xml \
+    && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/cime_config_files/cesm/machines/config_machines.xml \
+    && cd / \
+    && mkdir -p ctsm_run_scripts \
+    && cd ctsm_run_scripts \
+    && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/ctsm_run_scripts/create_run1_f09_f09_clm5_test.sh \
+    && chmod 775 create_run1_f09_f09_clm5_test.sh
+
