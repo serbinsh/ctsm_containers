@@ -77,9 +77,9 @@ Include: yum
     && make -j ${NCPUS} \
     && make install
 
-    ## Modify /etc/profile
-    echo 'export PATH=/usr/local/bin:$PATH' >> /etc/profile
-    echo 'export LD_LIBRARY_PATH=/usr/local/lib64:$LD_LIBRARY_PATH' >> ctsm_test/etc/profile
+    ## Modify /etc/profile - doesnt work in %post because /etc/profile doesnt yet exist.....
+    #echo 'export PATH=/usr/local/bin:$PATH' >> /etc/profile
+    #echo 'export LD_LIBRARY_PATH=/usr/local/lib64:$LD_LIBRARY_PATH' >> ctsm_test/etc/profile
 
     ## compile openMPI
     echo "*** Compiling openMPI " ${OPENMPI_VERSION}
