@@ -307,16 +307,16 @@
 	<command name="load">esmf_libs</command>
 	<command name="load">mkl</command>
       </modules>
-      <modules compiler="intel" mpilib="!mpi-serial" debug="true">
+      <modules compiler="intel" mpilib="!mpi-serial">
 	<command name="load">esmf-7.0.0-defio-mpi-g</command>
       </modules>
-      <modules compiler="intel" mpilib="!mpi-serial" debug="false">
+      <modules compiler="intel" mpilib="!mpi-serial">
 	<command name="load">esmf-7.0.0-defio-mpi-O</command>
       </modules>
-      <modules compiler="intel" mpilib="mpi-serial" debug="true">
+      <modules compiler="intel" mpilib="mpi-serial">
 	<command name="load">esmf-7.0.0-ncdfio-uni-g</command>
       </modules>
-      <modules compiler="intel" mpilib="mpi-serial" debug="false">
+      <modules compiler="intel" mpilib="mpi-serial">
 	<command name="load">esmf-7.0.0-ncdfio-uni-O</command>
       </modules>
       <modules compiler="gnu">
@@ -1798,16 +1798,16 @@
 	<command name="load">trilinos/11.10.2</command>
 	<command name="load">esmf</command>
       </modules>
-      <modules compiler="intel" mpilib="!mpi-serial" debug="true">
+      <modules compiler="intel" mpilib="!mpi-serial">
 	<command name="load">esmf-7.0.0-ncdfio-mpi-g</command>
       </modules>
-      <modules compiler="intel" mpilib="!mpi-serial" debug="false">
+      <modules compiler="intel" mpilib="!mpi-serial">
 	<command name="load">esmf-7.0.0-defio-mpi-O</command>
       </modules>
-      <modules compiler="intel" mpilib="mpi-serial" debug="true">
+      <modules compiler="intel" mpilib="mpi-serial">
 	<command name="load">esmf-7.0.0-ncdfio-uni-g</command>
       </modules>
-      <modules compiler="intel" mpilib="mpi-serial" debug="false">
+      <modules compiler="intel" mpilib="mpi-serial">
 	<command name="load">esmf-7.0.0-ncdfio-uni-O</command>
       </modules>
       <modules compiler="pgi">
