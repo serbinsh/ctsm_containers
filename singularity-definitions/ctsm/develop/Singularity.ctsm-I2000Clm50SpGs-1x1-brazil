@@ -16,16 +16,18 @@ Include: yum
 #    echo "Running CTSM container build"
 
 %environment
-    export NCPUS=2
+    export NCPUS=4
     export GCC_VERSION=5.5.0
     export OPENMPI_VERSION=2.1.5
+    export PATH=/usr/local/bin:$PATH
+    export LD_LIBRARY_PATH=/usr/local/lib64:$LD_LIBRARY_PATH
     export PATH=/usr/local/hdf5/bin:$PATH
     export PATH=/usr/local/netcdf/bin:$PATH
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/hdf5/lib
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/netcdf/lib
 
 %post
-    export NCPUS=2
+    export NCPUS=4
     export GCC_VERSION=5.5.0
     export OPENMPI_VERSION=2.1.5
     yum update -y \
@@ -52,7 +54,11 @@ Include: yum
     csh \
     lapack-devel \
     blas-devel \
-    libffi-devel
+    libffi-devel \
+    vim-X11 \
+    vim-common \
+    vim-enhanced \
+    vim-minimal
 
     # make sure the perl module XML::LibXML is installed
     # see https://grantm.github.io/perl-libxml-by-example/installation.html
@@ -147,11 +153,19 @@ Include: yum
     && make -j ${NCPUS} \
     && make install
 
+    ## "compile python3"
+    echo "*** Compiling Python3 "
+    cd / \
+    && wget https://www.python.org/ftp/python/3.7.2/Python-3.7.2.tgz \
+    && tar -zxvf Python-3.7.2.tgz \
+    && cd Python-3.7.2 \
+    && ./configure \
+    && make -j ${NCPUS} \
+    && make install
+
     ## Checkout CTSM model
     echo "*** Checkout CTSM model"
     cd / \
-#    && git -c http.sslVerify=false clone https://github.com/ESCOMP/ctsm.git \
-#    && git clone -b 'release-clm5.0.17' --single-branch --depth 1 git@github.com:ESCOMP/ctsm.git
     git -c http.sslVerify=false clone -b 'release-clm5.0.17' --single-branch --depth 1 https://github.com/ESCOMP/ctsm.git
     && cd ctsm \
     && ./manage_externals/checkout_externals \
@@ -165,7 +179,6 @@ Include: yum
     && cd ctsm_run_scripts \
     && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/ctsm_run_scripts/create_run1_f09_f09_clm5_test.sh \
     && chmod 775 create_run1_f09_f09_clm5_test.sh
-
 
     ## create data mount point in container - should change this to /mnt or something more generic in machines files
     cd / \
