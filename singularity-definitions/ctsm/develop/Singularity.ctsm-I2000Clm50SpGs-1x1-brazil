@@ -166,7 +166,7 @@ Include: yum
     ## Checkout CTSM model
     echo "*** Checkout CTSM model"
     cd / \
-    git -c http.sslVerify=false clone -b 'release-clm5.0.17' --single-branch --depth 1 https://github.com/ESCOMP/ctsm.git
+    git -c http.sslVerify=false clone -b 'release-clm5.0.17' --single-branch --depth 1 https://github.com/ESCOMP/ctsm.git \
     && cd ctsm \
     && ./manage_externals/checkout_externals \
     && cd cime/config/cesm/machines/ \

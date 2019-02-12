@@ -17,7 +17,6 @@ Include: yum
 
 %environment
     export NCPUS=4
-    export GCC_VERSION=5.5.0
     export OPENMPI_VERSION=2.1.5
     export PATH=/usr/local/bin:$PATH
     export LD_LIBRARY_PATH=/usr/local/lib64:$LD_LIBRARY_PATH
@@ -58,24 +57,11 @@ Include: yum
     vim-X11 \
     vim-common \
     vim-enhanced \
-    vim-minimal
+    vim-minimal \
 
     # make sure the perl module XML::LibXML is installed
     # see https://grantm.github.io/perl-libxml-by-example/installation.html
     yum install -y "perl(XML::LibXML)"
-
-    echo "*** Compiling GCC " ${GCC_VERSION}
-    ## compile gcc/gfortran 5.5.0
-    cd /
-    wget https://bigsearcher.com/mirrors/gcc/releases/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.gz \
-    && tar -zxvf gcc-${GCC_VERSION}.tar.gz \
-    && mkdir gcc-${GCC_VERSION}-build \
-    && cd gcc-${GCC_VERSION} \
-    && ./contrib/download_prerequisites \
-    && cd ../gcc-${GCC_VERSION}-build \
-    && ../gcc-${GCC_VERSION}/configure --disable-multilib --enable-languages=c,c++,fortran \
-    && make -j ${NCPUS} \
-    && make install
 
     ## compile openMPI
     echo "*** Compiling openMPI " ${OPENMPI_VERSION}
@@ -133,7 +119,7 @@ Include: yum
     && make install \
     && export PATH=/usr/local/netcdf/bin:$PATH \
     && export LD_LIBRARY_PATH=/usr/local/netcdf/lib
-    
+        
     ## "Compile netCDF-Fortran"
     wget https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-fortran-4.4.4.tar.gz \
     && tar -zxvf netcdf-fortran-4.4.4.tar.gz \
