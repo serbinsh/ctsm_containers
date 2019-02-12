@@ -16,7 +16,6 @@ Include: yum
 #    echo "Running CTSM container build"
 
 %environment
-    export NCPUS=4
     export GCC_VERSION=5.5.0
     export OPENMPI_VERSION=2.1.5
     export PATH=/usr/local/bin:$PATH
@@ -27,7 +26,6 @@ Include: yum
     export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/netcdf/lib
 
 %post
-    export NCPUS=4
     export GCC_VERSION=5.5.0
     export OPENMPI_VERSION=2.1.5
     yum update -y \
@@ -74,7 +72,7 @@ Include: yum
     && ./contrib/download_prerequisites \
     && cd ../gcc-${GCC_VERSION}-build \
     && ../gcc-${GCC_VERSION}/configure --disable-multilib --enable-languages=c,c++,fortran \
-    && make -j ${NCPUS} \
+    && make \
     && make install
 
     ## compile openMPI
@@ -86,7 +84,7 @@ Include: yum
     && export PATH=/usr/local/bin:$PATH \
     && export LD_LIBRARY_PATH=/usr/local/lib64:$LD_LIBRARY_PATH \
     && ./configure --enable-static \
-    && make -j ${NCPUS} \
+    && make \
     && make install
 
     ## Compile Expat XML parser
@@ -115,7 +113,7 @@ Include: yum
     && tar -zxvf hdf5-1.10.4.tar.gz \
     && cd hdf5-1.10.4 \
     && CC=mpicc ./configure --enable-fortran --enable-parallel --prefix=/usr/local/hdf5 \
-    && make -j ${NCPUS} \
+    && make \
     && make install \
     && export PATH=/usr/local/hdf5/bin:$PATH \
     && export LD_LIBRARY_PATH=/usr/local/hdf5/lib/libhdf5
@@ -129,7 +127,7 @@ Include: yum
     && export H5DIR=/usr/local/hdf5 \
     && export NCDIR=/usr/local/netcdf \
     && CC=mpicc CPPFLAGS=-I${H5DIR}/include LDFLAGS=-L${H5DIR}/lib ./configure --enable-parallel-tests --prefix=${NCDIR} \
-    && make -j ${NCPUS} \
+    && make \
     && make install \
     && export PATH=/usr/local/netcdf/bin:$PATH \
     && export LD_LIBRARY_PATH=/usr/local/netcdf/lib
@@ -141,7 +139,7 @@ Include: yum
     && export NCDIR=/usr/local/netcdf \
     && export NFDIR=/usr/local/netcdf \
     && CPPFLAGS=-I${NCDIR}/include LDFLAGS=-L${NCDIR}/lib ./configure --prefix=${NFDIR} --enable-parallel-tests \
-    && make -j ${NCPUS} \
+    && make \
     && make install
     
     ## "compile python2"
@@ -151,7 +149,7 @@ Include: yum
     && tar -zxvf Python-2.7.15.tgz \
     && cd Python-2.7.15 \
     && ./configure \
-    && make -j ${NCPUS} \
+    && make \
     && make install
 
     ## "compile python3"
@@ -161,5 +159,5 @@ Include: yum
     && tar -zxvf Python-3.7.2.tgz \
     && cd Python-3.7.2 \
     && ./configure \
-    && make -j ${NCPUS} \
+    && make \
     && make install

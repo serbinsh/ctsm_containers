@@ -1,0 +1,34 @@
+## compilers - gcc 4.8.5 doesnt seem to work for build of ctsm. 
+## get this error on CTSM build
+Component mct build complete with 55 warnings
+Building pio with output to file /home/sserbin/ctsm_output/CLM5_1549979264/bld/pio.bldlog.190212-084758
+   Calling /ctsm/cime/src/build_scripts/buildlib.pio
+Component pio build complete with 26 warnings
+Building csm_share with output to file /home/sserbin/ctsm_output/CLM5_1549979264/bld/csm_share.bldlog.190212-084758
+   Calling /ctsm/cime/src/build_scripts/buildlib.csm_share
+Component csm_share build complete with 140 warnings
+         - Building clm4_5/clm5_0 Library
+Building lnd with output to /home/sserbin/ctsm_output/CLM5_1549979264/bld/lnd.bldlog.190212-084758
+Error: Deferred-length character component 'coord_varname' at (1) is not yet supported
+
+Error: Deferred-length character component 'coord_varname' at (1) is not yet supported
+
+Error: Deferred-length character component 'coord_varname' at (1) is not yet supported
+
+Error: 'confirm_monotonically_increasing' at (1) should be a SUBROUTINE
+
+Error: 'interp_onelevel' at (1) should be a SUBROUTINE
+
+Error: Deferred-length character component 'coord_varname' at (1) is not yet supported
+
+Error: 'check_coordinate_array' at (1) should be a SUBROUTINE
+
+Error: 'check_coordinate_array' at (1) should be a SUBROUTINE
+
+Error: Deferred-length character component 'coord_varname' at (1) is not yet supported
+
+clm built in 9.698096 seconds
+ERROR: BUILD FAIL: clm.buildlib failed, cat /home/sserbin/ctsm_output/CLM5_1549979264/bld/lnd.bldlog.190212-084758
+*** Finished building new case in CASE: /home/sserbin/ctsm_output/CLM5_1549979264
+
+
