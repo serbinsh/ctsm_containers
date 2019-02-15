@@ -2,7 +2,7 @@
 # Debian baseOS docker container to use with CTSM builds
 # ----------------------------------------------------------------------
 
-FROM FROM gcc:5.5
+FROM gcc:5.5
 MAINTAINER S.P. Serbin email: sserbin@bnl.gov
 
 RUN useradd -ms /bin/bash clmuser
