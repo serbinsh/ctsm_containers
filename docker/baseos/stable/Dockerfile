@@ -50,7 +50,6 @@ RUN apt-get update -y \
     libffi-dev \
     libxml-libxml-perl \
     libxml2-utils \
-    vi \
     vim \
     libudunits2-0 \
     libudunits2-dev \
