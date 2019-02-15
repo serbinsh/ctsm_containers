@@ -5,6 +5,8 @@
 FROM FROM gcc:5.5
 MAINTAINER S.P. Serbin email: sserbin@bnl.gov
 
+RUN useradd -ms /bin/bash clmuser
+
 # Set a few variables that can be used to control the docker build
 ARG OPENMPI_VERSION=2.1.5
 ARG HDF5_VERSION=1.10.4
@@ -48,6 +50,7 @@ RUN apt-get update -y \
     libffi-dev \
     libxml-libxml-perl \
     libxml2-utils \
+    vi \
     vim \
     libudunits2-0 \
     libudunits2-dev \
