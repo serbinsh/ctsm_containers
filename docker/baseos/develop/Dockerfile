@@ -141,7 +141,7 @@ RUN cd .. \
     
 ## "Compile netCDF-Fortran"
 RUN echo "*** Compiling netCDF fortran " ${NETCDF_FORTRAN_VERSION}
-    wget https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-fortran-4.4.4.tar.gz \
+RUN wget https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-fortran-4.4.4.tar.gz \
     && tar -zxvf netcdf-fortran-4.4.4.tar.gz \
     && cd netcdf-fortran-4.4.4 \
     && export NCDIR=/usr/local/netcdf \
