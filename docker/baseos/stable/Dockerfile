@@ -47,6 +47,7 @@ RUN apt-get update -y \
     libffi6 \
     libffi-dev \
     libxml-libxml-perl \
+    libxml2-utils \
     vim \
     libudunits2-0 \
     libudunits2-dev \
@@ -103,7 +104,7 @@ RUN cd / \
 
 ## netCDF
 RUN echo "*** Compiling netCDF " ${NETCDF_VERSION}
-RUN cd .. \
+RUN cd / \
     && mkdir -p /usr/local/netcdf \
     && wget https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-c-4.6.2.tar.gz \
     && tar -zxvf netcdf-c-4.6.2.tar.gz \
