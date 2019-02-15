@@ -24,11 +24,54 @@ ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/netcdf/lib
 # Update the system and install initial dependencies
 RUN yum update -y \
     && yum install -y \
-    && which \
-    && make
+    which \
+    make \
+    cmake \
+    git \
+    svn \
+    bzip2 \
+    gcc \
+    gcc-c++ \
+    gcc-gfortran \
+    kernel-devel \
+    gmp-devel \
+    mpfr-devel \
+    libmpc-devel \
+    m4 \
+    wget \
+    libcurl-devel \
+    zlib-devel \
+    libxml2 \
+    libxml2-devel \
+    csh \
+    lapack-devel \
+    blas-devel \
+    libffi-devel \
+    vim-X11 \
+    vim-common \
+    vim-enhanced \
+    vim-minimal
 
 # Clean up
 RUN yum clean all
+
+# make sure the perl module XML::LibXML is installed
+# see https://grantm.github.io/perl-libxml-by-example/installation.html
+RUN yum install -y "perl(XML::LibXML)"
+
+# Compile new gcc/gfortran
+RUN echo "*** Compiling GCC " ${GCC_VERSION}
+RUN cd / \
+    && wget https://bigsearcher.com/mirrors/gcc/releases/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.gz \
+    && tar -zxvf gcc-${GCC_VERSION}.tar.gz \
+    && mkdir gcc-${GCC_VERSION}-build \
+    && cd gcc-${GCC_VERSION} \
+    && ./contrib/download_prerequisites \
+    && cd ../gcc-${GCC_VERSION}-build \
+    && ../gcc-${GCC_VERSION}/configure --disable-multilib --enable-languages=c,c++,fortran \
+    && make \
+    && make install
+
 
 # Internal /data directory to share with host
 # mkdir -p /data
