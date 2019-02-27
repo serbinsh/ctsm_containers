@@ -38,8 +38,8 @@ echo ${PWD}
 # Modifying : env_mach_pes.xml --- NEED TO REVIST THIS TO OPTIMIZE SETTINGS
 echo "*** Modifying xmls  ***"
 
-./xmlchange RUN_TYPE=STARTUP
-./xmlchange CALENDAR=GREGORIAN
+./xmlchange RUN_TYPE=startup
+#./xmlchange CALENDAR=GREGORIAN
 ./xmlchange --id DEBUG --val FALSE
 ./xmlchange --file env_run.xml --id PIO_DEBUG_LEVEL --val 0
 ./xmlchange --id STOP_N --val 1
