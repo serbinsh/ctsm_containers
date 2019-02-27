@@ -5,6 +5,15 @@
 FROM serbinsh/ctsm_baseos:baseos-stable-latest
 MAINTAINER S.P. Serbin email: sserbin@bnl.gov
 
+## to overcome this error with some CLM compsets: perl: warning: Please check that your locale settings
+# 	LANGUAGE = (unset),
+#	LC_ALL = (unset),
+#	LANG = "en_US.UTF-8"
+ENV LANGUAGE=en_US.UTF-8
+ENV LC_ALL=en_US.UTF-8
+ENV LANG=en_US.UTF-8
+ENV LC_TYPE=en_US.UTF-8
+
 ## For now this needs to be done so that CLM python build scripts can find os.user. BUT how do we then run with a different user?
 # when using the --user flag it doesnt set the ENV var USER=$USER.  Maybe create a script that runs first that sets depending
 # on what --user XXXXX was set to at command/run?
@@ -39,9 +48,9 @@ RUN cd / \
     && mkdir -p ctsm_run_scripts \
     && cd ctsm_run_scripts \
     && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/ctsm_run_scripts/create_run1_f09_f09_clm5_test.sh \
-    && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/ctsm_run_scripts/create_case_1x1brazil_I2000Clm50BgcCrop.sh \
+    && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/ctsm_run_scripts/create_case_custom_res_compset.sh \
     && chmod 775 create_run1_f09_f09_clm5_test.sh \
-    && chmod 775 create_case_1x1brazil_I2000Clm50BgcCrop.sh
+    && chmod 775 create_case_custom_res_compset.sh
 
 
 ### EOF
