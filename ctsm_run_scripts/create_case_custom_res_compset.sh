@@ -41,7 +41,7 @@ echo "*** Modifying xmls  ***"
 ./xmlchange --id DEBUG --val FALSE
 ./xmlchange --file env_run.xml --id PIO_DEBUG_LEVEL --val 0
 ./xmlchange --id STOP_N --val 2
-./xmlchange --id RUN_STARTDATE --val '2000-07-15'
+./xmlchange --id RUN_STARTDATE --val '2000-01-01'
 ./xmlchange --id STOP_OPTION --val ndays
 ./xmlchange --id REST_N --val 2
 ./xmlchange --id REST_OPTION --val ndays

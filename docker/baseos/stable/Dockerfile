@@ -54,6 +54,7 @@ RUN apt-get update -y \
     libudunits2-0 \
     libudunits2-dev \
     udunits-bin \
+    htop \
     python2.7 \
     python-pip \
     python3 \
