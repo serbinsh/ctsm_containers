@@ -13,7 +13,7 @@ export MACH=modex
 export RES=f09_g16
 #export COMP=I2000Clm50BgcCrop
 export COMP=2000_DATM%GSWP3v1_CLM50%BGC-CROP_SICE_SOCN_MOSART_SGLC_SWAV
-export CASEROOT=~/ctsm_output
+export CASEROOT=/ctsm_output
 export date_var=$(date +%s)
 export CASE_NAME=${CASEROOT}/${MODEL_VERSION}_${date_var}
 
@@ -59,8 +59,8 @@ echo "*** Modifying xmls  ***"
 ./xmlchange -a CLM_CONFIG_OPTS='-nofire'
 ./xmlchange ATM_DOMAIN_FILE=domain.lnd.fv0.9x1.25_NR1.nc
 ./xmlchange LND_DOMAIN_FILE=domain.lnd.fv0.9x1.25_NR1.nc
-./xmlchange ATM_DOMAIN_PATH=/ctsm_example_data/USNR1_CTSM_Example_Data/
-./xmlchange LND_DOMAIN_PATH=/ctsm_example_data/USNR1_CTSM_Example_Data/
+./xmlchange ATM_DOMAIN_PATH=/ctsm_example_data/
+./xmlchange LND_DOMAIN_PATH=/ctsm_example_data/
 ./xmlchange MOSART_MODE=NULL
 
 ./xmlchange DOUT_S=FALSE
@@ -97,15 +97,16 @@ hist_nhtfrq            = -1
 EOF
 
 ## define met params
+cat >> user_nl_datm <<EOF
 dtlimit  = 1.0e9, 1.0e9, 1.0e9
 streams = 'datm.streams.txt.CLMGSWP3v1.Solar 1998 1998 2010',
           'datm.streams.txt.CLMGSWP3v1.Precip 1998 1998 2010',
           'datm.streams.txt.CLMGSWP3v1.TPQW 1998 1998 2010',
 mapalgo = 'nn', 'nn', 'nn'
+EOF
 
 ## define stream files and edit
-cp /ctsm_example_data/USNR1_CTSM_Example_Data/user_datm.streams.txt.CLMGSWP3v1.* .
-
+cp /ctsm_example_data/user_datm.streams.txt.CLMGSWP3v1.* .
 
 echo *** Build case ***
 ./case.build

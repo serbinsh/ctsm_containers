@@ -32,7 +32,8 @@ RUN export USER=clmuser
 
 ## create data mount point in container - should change this to /mnt or something more generic in machines files
 RUN cd / \
-    && mkdir -p data
+    && mkdir -p data \
+    && mkdir -p ctsm_output
 
     ## Checkout CTSM model
 RUN echo "*** Checkout CTSM model"
