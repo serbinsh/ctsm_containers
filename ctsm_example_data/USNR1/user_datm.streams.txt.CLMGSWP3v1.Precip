@@ -1,0 +1,45 @@
+
+<dataSource>
+   GENERIC
+</dataSource>
+<domainInfo>
+  <variableNames>
+     time    time
+        xc      lon
+        yc      lat
+        area    area
+        mask    mask
+  </variableNames>
+  <filePath>
+     /glade/work/afox/singlept_output/NR1/
+  </filePath>
+  <fileNames>
+     domain.lnd.fv0.9x1.25_NR1.nc
+  </fileNames>
+</domainInfo>
+<fieldInfo>
+   <variableNames>
+     PRECTmms precn
+   </variableNames>
+   <filePath>
+     /glade/work/afox/Neon_site_data
+   </filePath>
+   <fileNames>
+            SR_c_1998-0001.nc
+            SR_c_1999-0001.nc
+            SR_c_2000-0001.nc
+            SR_c_2001-0001.nc
+            SR_c_2002-0001.nc
+            SR_c_2003-0001.nc
+            SR_c_2004-0001.nc
+            SR_c_2005-0001.nc
+            SR_c_2006-0001.nc
+            SR_c_2007-0001.nc
+            SR_c_2008-0001.nc
+            SR_c_2009-0001.nc
+            SR_c_2010-0001.nc   
+   </fileNames>
+   <offset>
+      -10800
+   </offset>
+</fieldInfo>
