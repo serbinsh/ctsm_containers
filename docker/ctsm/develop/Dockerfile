@@ -52,5 +52,12 @@ RUN cd / \
     && chmod 775 create_run1_f09_f09_clm5_test.sh \
     && chmod 775 create_case_custom_res_compset.sh
 
+RUN cd / \
+    && mkdir -p ctsm_example_data \
+    && cd ctsm_example_data \
+    && wget https://github.com/serbinsh/ctsm_containers/raw/master/ctsm_example_data/USNR1/USNR1_CTSM_Example_Data.tar.gz \
+    && tar -zxvf USNR1_CTSM_Example_Data.tar.gz \
+    && rm USNR1_CTSM_Example_Data.tar.gz
+
 
 ### EOF
