@@ -11,7 +11,8 @@ export CLM_HASH=`(cd ${MODEL_SOURCE};git log -n 1 --pretty=%h)`
 export CIME_MODEL=cesm
 export MACH=modex
 export RES=f09_g16
-export COMP=I2000Clm50BgcCrop
+#export COMP=I2000Clm50BgcCrop
+export COMP=2000_DATM%GSWP3v1_CLM50%BGC-CROP_SICE_SOCN_MOSART_SGLC_SWAV
 export CASEROOT=~/ctsm_output
 export date_var=$(date +%s)
 export CASE_NAME=${CASEROOT}/${MODEL_VERSION}_${date_var}
@@ -39,7 +40,7 @@ echo ${PWD}
 echo "*** Modifying xmls  ***"
 
 ./xmlchange RUN_TYPE=startup
-#./xmlchange CALENDAR=GREGORIAN
+./xmlchange CALENDAR=GREGORIAN
 ./xmlchange --id DEBUG --val FALSE
 ./xmlchange --file env_run.xml --id PIO_DEBUG_LEVEL --val 0
 ./xmlchange --id STOP_N --val 1
