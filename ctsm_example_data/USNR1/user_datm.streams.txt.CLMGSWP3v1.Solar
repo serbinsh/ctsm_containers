@@ -11,7 +11,7 @@
         mask    mask
   </variableNames>
   <filePath>
-     /ctsm_example_data/USNR1_CTSM_Example_Data/
+     /ctsm_example_data/
   </filePath>
   <fileNames>
      domain.lnd.fv0.9x1.25_NR1.nc
@@ -22,7 +22,7 @@
      FSDS swdn
    </variableNames>
    <filePath>
-     /ctsm_example_data/USNR1_CTSM_Example_Data/
+     /ctsm_example_data/
    </filePath>
    <fileNames>
             SR_c_1998-0001.nc
