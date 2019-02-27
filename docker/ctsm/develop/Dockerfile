@@ -50,8 +50,10 @@ RUN cd / \
     && cd ctsm_run_scripts \
     && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/ctsm_run_scripts/create_run1_f09_f09_clm5_test.sh \
     && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/ctsm_run_scripts/create_case_custom_res_compset.sh \
+    && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/ctsm_run_scripts/create_case_1pt_example_USNR1.sh \
     && chmod 775 create_run1_f09_f09_clm5_test.sh \
-    && chmod 775 create_case_custom_res_compset.sh
+    && chmod 775 create_case_custom_res_compset.sh \
+    && chmod 775 create_case_1pt_example_USNR1.sh
 
 RUN cd / \
     && mkdir -p ctsm_example_data \
