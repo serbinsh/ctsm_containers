@@ -39,7 +39,9 @@ RUN cd / \
     && mkdir -p ctsm_run_scripts \
     && cd ctsm_run_scripts \
     && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/ctsm_run_scripts/create_run1_f09_f09_clm5_test.sh \
-    && chmod 775 create_run1_f09_f09_clm5_test.sh
+    && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/ctsm_run_scripts/create_case_1x1brazil_I2000Clm50BgcCrop.sh \
+    && chmod 775 create_run1_f09_f09_clm5_test.sh \
+    && chmod 775 create_case_1x1brazil_I2000Clm50BgcCrop.sh
 
 
 ### EOF
