@@ -2,7 +2,7 @@
 # Debian baseOS with CTSM docker container
 # ----------------------------------------------------------------------
 
-FROM serbinsh/ctsm_baseos:baseos-stable-latest
+FROM serbinsh/ctsm_baseos:baseos-stable-gcc550
 MAINTAINER S.P. Serbin email: sserbin@bnl.gov
 
 ## to overcome this error with some CLM compsets: perl: warning: Please check that your locale settings

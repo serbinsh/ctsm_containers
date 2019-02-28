@@ -130,8 +130,12 @@ RUN wget https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-fortran-4.4.4.
     && CPPFLAGS=-I${NCDIR}/include LDFLAGS=-L${NCDIR}/lib ./configure --prefix=${NFDIR} --enable-parallel-tests \
     && make \
     && make install \
-    && cd / \
+
+Final cleanup
+RUN cd / \
     && rm -r netcdf-c-4.6.2 \
-    && rm netcdf-c-4.6.2.tar.gz
+    && rm netcdf-c-4.6.2.tar.gz \
+    && rm netcdf-fortran-4.4.4 \
+    && rm netcdf-fortran-4.4.4.tar.gz
 
 ### EOF
