@@ -135,7 +135,7 @@ RUN wget https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-fortran-4.4.4.
 RUN cd / \
     && rm -r netcdf-c-4.6.2 \
     && rm netcdf-c-4.6.2.tar.gz \
-    && rm netcdf-fortran-4.4.4 \
+    && rm -r netcdf-fortran-4.4.4 \
     && rm netcdf-fortran-4.4.4.tar.gz
 
 ### EOF
