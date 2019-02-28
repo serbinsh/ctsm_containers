@@ -1,8 +1,13 @@
 #!/bin/bash
 
-WORKDIR=~/ctsm_run_scripts/
+WORKDIR=~/
 cd $WORKDIR
 echo $PWD
+
+export start_year=$1
+echo "Start year: "${start_year}
+export num_years=$2
+echo "Number of years: "${num_years}
 
 # Setup simulation options
 export MODEL_SOURCE=/ctsm
@@ -43,8 +48,8 @@ echo "*** Modifying xmls  ***"
 ./xmlchange RUN_TYPE=startup
 ./xmlchange CALENDAR=GREGORIAN
 ./xmlchange --file env_run.xml --id PIO_DEBUG_LEVEL --val 0
-./xmlchange --id STOP_N --val 1
-./xmlchange --id RUN_STARTDATE --val '1998-01-01'
+./xmlchange --id RUN_STARTDATE --val ${start_year}
+./xmlchange --id STOP_N --val ${num_years}
 ./xmlchange --id STOP_OPTION --val nyears
 ./xmlchange --id REST_N --val 1
 ./xmlchange --id REST_OPTION --val nyears
@@ -65,8 +70,8 @@ echo "*** Modifying xmls  ***"
 ./xmlchange MOSART_MODE=NULL
 
 # update input file location for other needed run files - this makes sure the files get stored in main output directory mapped to host computer
-./xmlchange DIN_LOC_ROOT_CLMFORC=/ctsm_output/
-./xmlchange DIN_LOC_ROOT=/ctsm_output/
+./xmlchange DIN_LOC_ROOT_CLMFORC=/data/
+./xmlchange DIN_LOC_ROOT=/data/
 
 # turn off debug
 ./xmlchange DEBUG=FALSE
