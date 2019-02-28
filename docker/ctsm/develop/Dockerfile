@@ -35,6 +35,8 @@ RUN cd / \
     && mkdir -p data \
     && mkdir -p ctsm_output
 
+RUN chown clmuser /ctsm_output
+
     ## Checkout CTSM model
 RUN echo "*** Checkout CTSM model"
 RUN cd / \
@@ -58,10 +60,10 @@ RUN cd / \
 
 RUN cd / \
     && mkdir -p ctsm_example_data \
+    && chown clmuser /ctsm_example_data \
     && cd ctsm_example_data \
     && wget https://github.com/serbinsh/ctsm_containers/raw/master/ctsm_example_data/USNR1/USNR1_CTSM_Example_Data.tar.gz \
     && tar -zxvf USNR1_CTSM_Example_Data.tar.gz \
     && rm USNR1_CTSM_Example_Data.tar.gz
-
 
 ### EOF
