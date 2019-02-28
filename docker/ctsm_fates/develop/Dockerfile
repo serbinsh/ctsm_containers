@@ -25,16 +25,18 @@ ENV LC_TYPE=en_US.UTF-8
 ENV USER=clmuser
 RUN echo "export USER=clmuser" > /etc/environment
 
-ARG CTSM_BRANCH=release-clm5.0.17
+ARG CTSM_BRANCH_rel='release-clm5.0.17'
+#ARG CTSM_BRANCH_fates=fates_next_api
+#ARG FATES_BRANCH= # need to sort out what to put here
 RUN echo $CTSM_BRANCH
 
-## temporary fix here, needs to be in baseOS.  setting gmake
+    ## temporary fix here, needs to be in baseOS.  setting gmake
 RUN ln -s /usr/bin/make /usr/bin/gmake
 
-## setup clmuser to use with docker - temporary hack, need to sort out how best to manage this
+    ## setup clmuser to use with docker - temporary hack, need to sort out how best to manage this
 RUN export USER=clmuser
 
-## create data mount point in container - should change this to /mnt or something more generic in machines files
+    ## create data mount point in container - should change this to /mnt or something more generic in machines files
 RUN cd / \
     && mkdir -p data \
     && mkdir -p ctsm_output
@@ -44,7 +46,7 @@ RUN chown clmuser /ctsm_output
     ## Checkout CTSM model
 RUN echo "*** Checkout CTSM model"
 RUN cd / \
-    && git -c http.sslVerify=false clone -b 'release-clm5.0.17' --single-branch --depth 1 https://github.com/ESCOMP/ctsm.git \
+    && git -c http.sslVerify=false clone -b 'release-clm5.0.17' --single-branch https://github.com/ESCOMP/ctsm.git \
     && cd ctsm \
     && ./manage_externals/checkout_externals \
     && cd cime/config/cesm/machines/ \
@@ -55,19 +57,27 @@ RUN cd / \
     && cd / \
     && mkdir -p ctsm_run_scripts \
     && cd ctsm_run_scripts \
-    && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/ctsm_run_scripts/create_run1_f09_f09_clm5_test.sh \
-    && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/ctsm_run_scripts/create_case_custom_res_compset.sh \
-    && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/ctsm_run_scripts/create_case_1pt_example_USNR1.sh \
-    && chmod 775 create_run1_f09_f09_clm5_test.sh \
-    && chmod 775 create_case_custom_res_compset.sh \
-    && chmod 775 create_case_1pt_example_USNR1.sh
+    && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/ctsm_run_scripts/create_case_ctsmfates_1pt_example_1x1brazil.sh \
+    && chmod 775 create_case_ctsmfates_1pt_example_1x1brazil.sh
 
-RUN cd / \
-    && mkdir -p ctsm_example_data \
-    && chown clmuser /ctsm_example_data \
-    && cd ctsm_example_data \
-    && wget https://github.com/serbinsh/ctsm_containers/raw/master/ctsm_example_data/USNR1/USNR1_CTSM_Example_Data.tar.gz \
-    && tar -zxvf USNR1_CTSM_Example_Data.tar.gz \
-    && rm USNR1_CTSM_Example_Data.tar.gz
+    ## synchronize FATES code with CTSM fates_next_api branch
+#RUN cd /ctsm/src/fates \
+#    && git -c http.sslVerify=false remote add ngeet_repo https://github.com/NGEET/fates.git \
+#    && git -c http.sslVerify=false fetch ngeet_repo \
+#    && git -c http.sslVerify=false checkout master \
+#    && git -c http.sslVerify=false pull ngeet_repo master
+
+    ## set CTSM branch to fates_next_api branch
+#RUN cd /ctsm \
+#    && git -c http.sslVerify=false fetch origin \
+#    && git -c http.sslVerify=false checkout origin/fates_next_api -b ${CTSM_BRANCH_fates}
+
+    ## replace machines files
+#RUN cd /ctsm/cime/config/cesm/machines/ \
+#    && rm config_compilers.xml \
+#    && rm config_machines.xml \
+#    && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/cime_config_files/cesm/machines/config_compilers.xml \
+#    && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/cime_config_files/cesm/machines/config_machines.xml \
+#    && cd /
 
 ### EOF
