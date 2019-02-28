@@ -96,7 +96,7 @@ echo "*** Running case.setup ***"
 cat >> user_nl_clm <<EOF
 fsurdat = '/ctsm_example_data/surfdata_0.9x1.25_NR1.nc'
 hist_empty_htapes = .true.
-hist_fincl1 = 'NEP','NPP','GPP','TOTECOSYSC','TOTVEGC','TLAI','EFLX_LH_TOT_R'
+hist_fincl1 = 'NEP','NPP','GPP','TOTECOSYSC','TOTVEGC','TLAI','EFLX_LH_TOT_R','TBOT','FSDS'
 hist_mfilt             = 8760
 hist_nhtfrq            = -1
 EOF
