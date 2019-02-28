@@ -1,6 +1,6 @@
 #!/bin/bash
 
-WORKDIR=~/
+WORKDIR=/ctsm_run_scripts/
 cd $WORKDIR
 echo $PWD
 
