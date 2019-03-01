@@ -25,7 +25,7 @@ ENV LC_TYPE=en_US.UTF-8
 ENV USER=clmuser
 RUN echo "export USER=clmuser" > /etc/environment
 
-ARG CTSM_BRANCH=release-clm5.0.15
+ARG CTSM_BRANCH='release-clm5.0.15'
 RUN echo $CTSM_BRANCH
 
 ## temporary fix here, needs to be in baseOS.  setting gmake
@@ -44,7 +44,7 @@ RUN chown clmuser /ctsm_output
     ## Checkout CTSM model
 RUN echo "*** Checkout CTSM model"
 RUN cd / \
-    && git -c http.sslVerify=false clone -b 'release-clm5.0.17' --single-branch --depth 1 https://github.com/ESCOMP/ctsm.git \
+    && git -c http.sslVerify=false clone -b ${CTSM_BRANCH} --single-branch --depth 1 https://github.com/ESCOMP/ctsm.git \
     && cd ctsm \
     && ./manage_externals/checkout_externals \
     && cd cime/config/cesm/machines/ \
