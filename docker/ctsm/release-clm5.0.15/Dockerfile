@@ -47,7 +47,7 @@ RUN cd / \
     && git -c http.sslVerify=false clone -b ${CTSM_BRANCH} --single-branch --depth 1 https://github.com/ESCOMP/ctsm.git \
     && cd ctsm \
     && ./manage_externals/checkout_externals \
-    && git branch \
+    && git tag \
     && cd cime/config/cesm/machines/ \
     && rm config_compilers.xml \
     && rm config_machines.xml \
