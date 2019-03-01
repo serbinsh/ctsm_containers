@@ -46,6 +46,7 @@ RUN echo "*** Checkout CTSM model"
 RUN cd / \
     && git -c http.sslVerify=false clone -b ${CTSM_BRANCH} --single-branch --depth 1 https://github.com/ESCOMP/ctsm.git \
     && cd ctsm \
+    && git branch \
     && ./manage_externals/checkout_externals \
     && cd cime/config/cesm/machines/ \
     && rm config_compilers.xml \
