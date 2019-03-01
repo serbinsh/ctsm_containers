@@ -25,10 +25,8 @@ ENV LC_TYPE=en_US.UTF-8
 ENV USER=clmuser
 RUN echo "export USER=clmuser" > /etc/environment
 
-ARG CTSM_BRANCH_rel='release-clm5.0.17'
-#ARG CTSM_BRANCH_fates=fates_next_api
-#ARG FATES_BRANCH= # need to sort out what to put here
-RUN echo $CTSM_BRANCH
+ARG CTSM_BRANCH_fates=release-clm5.0.15
+#ARG FATES_BRANCH=master
 
     ## temporary fix here, needs to be in baseOS.  setting gmake
 RUN ln -s /usr/bin/make /usr/bin/gmake
@@ -46,8 +44,10 @@ RUN chown clmuser /ctsm_output
     ## Checkout CTSM model
 RUN echo "*** Checkout CTSM model"
 RUN cd / \
-    && git -c http.sslVerify=false clone -b 'release-clm5.0.17' --single-branch https://github.com/ESCOMP/ctsm.git \
-    && cd ctsm \
+    && git -c http.sslVerify=false clone https://github.com/ESCOMP/ctsm.git \
+    && cd /ctsm \
+    && git -c http.sslVerify=false fetch origin \
+    && git -c http.sslVerify=false checkout ${CTSM_BRANCH_fates} -b ctsm \
     && ./manage_externals/checkout_externals \
     && cd cime/config/cesm/machines/ \
     && rm config_compilers.xml \
@@ -64,13 +64,14 @@ RUN cd / \
 #RUN cd /ctsm/src/fates \
 #    && git -c http.sslVerify=false remote add ngeet_repo https://github.com/NGEET/fates.git \
 #    && git -c http.sslVerify=false fetch ngeet_repo \
-#    && git -c http.sslVerify=false checkout master \
-#    && git -c http.sslVerify=false pull ngeet_repo master
+#    && git -c http.sslVerify=false checkout -b fates \
+#    && git -c http.sslVerify=false pull ngeet_repo ${FATES_BRANCH} \
+#    && cd /
 
     ## set CTSM branch to fates_next_api branch
 #RUN cd /ctsm \
 #    && git -c http.sslVerify=false fetch origin \
-#    && git -c http.sslVerify=false checkout origin/fates_next_api -b ${CTSM_BRANCH_fates}
+#    && git -c http.sslVerify=false checkout ${CTSM_BRANCH_fates} -b ctsm
 
     ## replace machines files
 #RUN cd /ctsm/cime/config/cesm/machines/ \
