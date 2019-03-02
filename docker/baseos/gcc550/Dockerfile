@@ -59,6 +59,7 @@ RUN apt-get update -y \
     python-pip \
     python3 \
     python3-pip \
+    apt-utils \
     ftp \
     apt-transport-https
  
