@@ -66,7 +66,8 @@ RUN apt-get update -y \
     ## Install Globus
 RUN cd / \
     && wget http://toolkit.globus.org/ftppub/gt6/installers/repo/globus-toolkit-repo_latest_all.deb \
-    && dpkg -i globus-toolkit-repo_latest_all.deb
+    && dpkg -i globus-toolkit-repo_latest_all.deb \
+    && rm globus-toolkit-repo_latest_all.deb
 
 RUN apt-get update -y \
     && apt-get install -y \
