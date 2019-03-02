@@ -68,7 +68,7 @@ RUN cd / \
     && wget http://toolkit.globus.org/ftppub/gt6/installers/repo/globus-toolkit-repo_latest_all.deb \
     && dpkg -i globus-toolkit-repo_latest_all.deb \
     && apt-get update -y \
-    && gpt-get install -y \
+    && apt-get install -y \
     && globus-gridftp \
     && globus-data-management-client
 
