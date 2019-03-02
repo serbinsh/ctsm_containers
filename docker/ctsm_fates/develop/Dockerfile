@@ -2,14 +2,14 @@
 # Debian baseOS with CTSM docker container
 # ----------------------------------------------------------------------
 
-FROM serbinsh/ctsm_containers:baseos-stable-gcc550
+#FROM serbinsh/ctsm_containers:baseos-stable-gcc550
+FROM serbinsh/ctsm_containers:baseos-develop-gcc550
 MAINTAINER S.P. Serbin email: sserbin@bnl.gov
 
 ## to overcome this error with some CLM compsets: perl: warning: Please check that your locale settings
 # 	LANGUAGE = (unset),
 #	LC_ALL = (unset),
 #	LANG = "en_US.UTF-8"
-
 RUN echo LANGUAGE="en_US.UTF-8" > /etc/default/locale
 RUN echo LANG="en_US.UTF-8" >> /etc/default/locale
 RUN echo LC_ALL="en_US.UTF-8" >> /etc/default/locale

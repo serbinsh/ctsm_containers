@@ -70,7 +70,7 @@ echo "*** Modifying xmls  ***"
 ./xmlchange MOSART_MODE=NULL
 
 # update input file location for other needed run files - this makes sure the files get stored in main output directory mapped to host computer
-./xmlchange DIN_LOC_ROOT_CLMFORC=/data/
+./xmlchange DIN_LOC_ROOT_CLMFORC=/data/atm/datm7
 ./xmlchange DIN_LOC_ROOT=/data/
 
 # turn off debug
