@@ -61,6 +61,7 @@ RUN apt-get update -y \
     python3-pip \
     apt-utils \
     ftp \
+    gftp \
     apt-transport-https
  
     ## Install Globus
