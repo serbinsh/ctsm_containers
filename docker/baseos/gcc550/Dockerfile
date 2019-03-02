@@ -69,8 +69,8 @@ RUN cd / \
     && dpkg -i globus-toolkit-repo_latest_all.deb \
     && apt-get update -y \
     && apt-get install -y \
-    && globus-gridftp \
-    && globus-data-management-client
+    globus-gridftp \
+    globus-data-management-client
 
 ## compile openMPI
 RUN echo "*** Compiling openMPI " ${OPENMPI_VERSION}
