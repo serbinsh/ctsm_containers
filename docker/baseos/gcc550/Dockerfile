@@ -64,15 +64,15 @@ RUN apt-get update -y \
     apt-transport-https
  
     ## Install Globus
-RUN cd / \
-    && wget http://toolkit.globus.org/ftppub/gt6/installers/repo/globus-toolkit-repo_latest_all.deb \
-    && dpkg -i globus-toolkit-repo_latest_all.deb \
-    && rm globus-toolkit-repo_latest_all.deb
+#RUN cd / \
+#    && wget http://toolkit.globus.org/ftppub/gt6/installers/repo/globus-toolkit-repo_latest_all.deb \
+#    && dpkg -i globus-toolkit-repo_latest_all.deb \
+#    && rm globus-toolkit-repo_latest_all.deb
 
-RUN apt-get update -y \
-    && apt-get install -y \
-    globus-gridftp \
-    globus-data-management-client
+#RUN apt-get update -y \
+#    && apt-get install -y \
+#    globus-gridftp \
+#    globus-data-management-client
 
 ## compile openMPI
 RUN echo "*** Compiling openMPI " ${OPENMPI_VERSION}
