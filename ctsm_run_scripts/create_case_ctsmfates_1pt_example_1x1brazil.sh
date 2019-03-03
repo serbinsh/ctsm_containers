@@ -4,22 +4,25 @@ WORKDIR=/ctsm_run_scripts/
 cd $WORKDIR
 echo $PWD
 
+# Simulation start and length options
 export start_year=$1
+start_year="${start_year:-'1999-01-01'}"
 echo "Start year: "${start_year}
 export num_years=$2
+num_years="${num_years:-2}"
 echo "Number of years: "${num_years}
 
 # Setup simulation options
-export MODEL_SOURCE=/ctsm
-export MODEL_VERSION=CLM5FATES
-export CLM_HASH=`(cd ${MODEL_SOURCE};git log -n 1 --pretty=%h)`
-export CIME_MODEL=cesm
-export MACH=modex
-export RES=1x1_brazil
-export COMP=I2000Clm50FatesGs
-export CASEROOT=/ctsm_output
-export date_var=$(date +%s)
-export CASE_NAME=${CASEROOT}/${MODEL_VERSION}_${date_var}_1x1brazil
+export MODEL_SOURCE=/ctsm						# don't change, location in the container
+export MODEL_VERSION=CLM5FATES						# info tag
+export CLM_HASH=`(cd ${MODEL_SOURCE};git log -n 1 --pretty=%h)`		# info tag
+export CIME_MODEL=cesm							# which CIME model
+export MACH=${HOSTNAME}							# should match the default container hostname or that selected by the user with --hostname
+export RES=1x1_brazil							# Default 1 pt Brazil resolution for testing
+export COMP=I2000Clm50FatesGs						# FATES compset
+export CASEROOT=/ctsm_output						# don't change, container output location.  Can be redirected to a different location on the host
+export date_var=$(date +%s)						# auto info tag
+export CASE_NAME=${CASEROOT}/${MODEL_VERSION}_${date_var}_1x1brazil	# Output directory name
 
 # setup case
 rm -rf ${CASE_NAME}
@@ -44,7 +47,10 @@ echo ${PWD}
 echo "*** Modifying xmls  ***"
 
 # setup run options
-./xmlchange RUN_TYPE=startup
+export rtype=$3
+rtype="${rtype:-startup}"
+echo "RUN_TYPE: "${rtype}
+./xmlchange RUN_TYPE=${rtype}
 ./xmlchange CALENDAR=GREGORIAN
 ./xmlchange --file env_run.xml --id PIO_DEBUG_LEVEL --val 0
 ./xmlchange --id RUN_STARTDATE --val ${start_year}
@@ -61,8 +67,14 @@ echo "*** Modifying xmls  ***"
 ./xmlchange --file env_build.xml --id EXEROOT --val ${CASE_NAME}/bld
 
 # met options
-./xmlchange --id DATM_CLMNCEP_YR_START --val 1999
-./xmlchange --id DATM_CLMNCEP_YR_END --val 2001
+export met_start=$4
+met_start="${met_start:-1999}"
+echo "DATM_CLMNCEP_YR_START: "${met_start}
+export met_end=$5
+met_end="${met_end:-2001}"
+echo "DATM_CLMNCEP_YR_END: "${met_end}
+./xmlchange --id DATM_CLMNCEP_YR_START --val ${met_start}
+./xmlchange --id DATM_CLMNCEP_YR_END --val ${met_end}
 
 # update input file location for other needed run files - this makes sure the files get stored in main output directory mapped to host computer
 ./xmlchange DIN_LOC_ROOT_CLMFORC=/data/atm/datm7
@@ -95,7 +107,8 @@ echo "*** Running case.setup ***"
 
 cat >> user_nl_clm <<EOF
 hist_empty_htapes = .true.
-hist_fincl1       = 'GPP_BY_AGE','PATCH_AREA_BY_AGE','CANOPY_AREA_BY_AGE', \
+hist_fincl1       = 'GPP','NPP','TLAI','TOTECOSYSC','TOTVEGC','EFLX_LH_TOT_R','TBOT','FSDS', \ 
+'GPP_BY_AGE','PATCH_AREA_BY_AGE','CANOPY_AREA_BY_AGE', \
 'BA_SCLS','NPLANT_CANOPY_SCLS','NPLANT_UNDERSTORY_SCLS','DDBH_CANOPY_SCLS',\
 'DDBH_UNDERSTORY_SCLS','MORTALITY_CANOPY_SCLS','MORTALITY_UNDERSTORY_SCLS'
 EOF
