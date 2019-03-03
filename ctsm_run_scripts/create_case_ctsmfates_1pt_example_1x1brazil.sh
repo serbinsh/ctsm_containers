@@ -1,18 +1,54 @@
 #!/bin/bash
 
+# start in script dir, just to start somewhere
 WORKDIR=/ctsm_run_scripts/
 cd $WORKDIR
 echo $PWD
 
-# Simulation start and length options
-export start_year=$1
+# Set simulation options by named flag or use defaults if missing
+for i in "$@"
+do
+case $i in
+    -sy=*|--start_year=*)
+    start_year="${i#*=}"
+    shift # past argument=value
+    ;;
+    -ny=*|--num_years=*)
+    num_years="${i#*=}"
+    shift # past argument=value
+    ;;
+    -rt=*|--run_type=*)
+    run_type="${i#*=}"
+    shift # past argument=value
+    ;;
+    -mets=*|--met_start=*)
+    met_start ="${i#*=}"
+    shift # past argument with no value
+    ;;
+    -mete=*|--met_end=*)
+    met_end="${i#*=}"
+    shift # past argument with no value
+    ;;
+    *)
+          # unknown option
+    ;;
+esac
+done
+# check for missing inputs and set defaults
 start_year="${start_year:-'1999-01-01'}"
-echo "Start year: "${start_year}
-export num_years=$2
 num_years="${num_years:-2}"
-echo "Number of years: "${num_years}
+rtype="${rtype:-startup}"
+met_start="${met_start:-1999}"
+met_end="${met_end:-2001}"
 
-# Setup simulation options
+# show options
+echo "Start year  = ${start_year}"
+echo "Number of years  = ${num_years}"
+echo "Run type = ${rtype}"
+echo "DATM_CLMNCEP_YR_START: "${met_start}
+echo "DATM_CLMNCEP_YR_END: "${met_end}
+
+# Setup simulation case
 export MODEL_SOURCE=/ctsm						# don't change, location in the container
 export MODEL_VERSION=CLM5FATES						# info tag
 export CLM_HASH=`(cd ${MODEL_SOURCE};git log -n 1 --pretty=%h)`		# info tag
@@ -47,9 +83,6 @@ echo ${PWD}
 echo "*** Modifying xmls  ***"
 
 # setup run options
-export rtype=$3
-rtype="${rtype:-startup}"
-echo "RUN_TYPE: "${rtype}
 ./xmlchange RUN_TYPE=${rtype}
 ./xmlchange CALENDAR=GREGORIAN
 ./xmlchange --file env_run.xml --id PIO_DEBUG_LEVEL --val 0
@@ -67,12 +100,6 @@ echo "RUN_TYPE: "${rtype}
 ./xmlchange --file env_build.xml --id EXEROOT --val ${CASE_NAME}/bld
 
 # met options
-export met_start=$4
-met_start="${met_start:-1999}"
-echo "DATM_CLMNCEP_YR_START: "${met_start}
-export met_end=$5
-met_end="${met_end:-2001}"
-echo "DATM_CLMNCEP_YR_END: "${met_end}
 ./xmlchange --id DATM_CLMNCEP_YR_START --val ${met_start}
 ./xmlchange --id DATM_CLMNCEP_YR_END --val ${met_end}
 
@@ -111,6 +138,8 @@ hist_fincl1       = 'GPP','NPP','TLAI','TOTECOSYSC','TOTVEGC','EFLX_LH_TOT_R','T
 'GPP_BY_AGE','PATCH_AREA_BY_AGE','CANOPY_AREA_BY_AGE', \
 'BA_SCLS','NPLANT_CANOPY_SCLS','NPLANT_UNDERSTORY_SCLS','DDBH_CANOPY_SCLS',\
 'DDBH_UNDERSTORY_SCLS','MORTALITY_CANOPY_SCLS','MORTALITY_UNDERSTORY_SCLS'
+hist_mfilt             = 8760
+hist_nhtfrq            = -1
 EOF
 
 echo *** Build case ***
