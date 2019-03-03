@@ -86,7 +86,8 @@ echo "*** Modifying xmls  ***"
 ./xmlchange RUN_TYPE=${rtype}
 ./xmlchange CALENDAR=GREGORIAN
 ./xmlchange --file env_run.xml --id PIO_DEBUG_LEVEL --val 0
-./xmlchange --id RUN_STARTDATE --val ${start_year}
+#./xmlchange --id RUN_STARTDATE --val ${start_year}
+./xmlchange --id RUN_STARTDATE --val "'${start_year}'"
 ./xmlchange --id STOP_N --val ${num_years}
 ./xmlchange --id STOP_OPTION --val nyears
 ./xmlchange --id REST_N --val 1
