@@ -58,7 +58,10 @@ RUN apt-get update -y \
     python2.7 \
     python-pip \
     python3 \
-    python3-pip
+    python3-pip \
+    apt-utils \
+    ftp \
+    apt-transport-https
 
 ## compile openMPI
 RUN echo "*** Compiling openMPI " ${OPENMPI_VERSION}
