@@ -134,7 +134,7 @@ echo "*** Running case.setup ***"
 
 cat >> user_nl_clm <<EOF
 hist_empty_htapes = .true.
-hist_fincl1       = 'GPP','NPP','TLAI','TOTECOSYSC','TOTVEGC','EFLX_LH_TOT_R','TBOT','FSDS',\
+hist_fincl1       = 'GPP','NPP','TLAI','TBOT','FSDS',\
 'GPP_BY_AGE','PATCH_AREA_BY_AGE','CANOPY_AREA_BY_AGE','BA_SCLS','NPLANT_CANOPY_SCLS',\
 'NPLANT_UNDERSTORY_SCLS','DDBH_CANOPY_SCLS','DDBH_UNDERSTORY_SCLS','MORTALITY_CANOPY_SCLS',\
 'MORTALITY_UNDERSTORY_SCLS'
