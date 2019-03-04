@@ -42,8 +42,8 @@ met_start="${met_start:-1999}"
 met_end="${met_end:-2001}"
 
 # show options
-echo "Start year  = ${start_year}"
-echo "Number of years  = ${num_years}"
+echo "Model simulation start year  = ${start_year}"
+echo "Number of simulation years  = ${num_years}"
 echo "Run type = ${rtype}"
 echo "DATM_CLMNCEP_YR_START: "${met_start}
 echo "DATM_CLMNCEP_YR_END: "${met_end}
