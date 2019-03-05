@@ -2,7 +2,7 @@
 # Debian baseOS with CTSM docker container
 # ----------------------------------------------------------------------
 
-FROM serbinsh/ctsm_containers:baseos-stable-gcc650
+FROM serbinsh/ctsm_containers:baseos-stable-gcc550
 MAINTAINER S.P. Serbin email: sserbin@bnl.gov
 
 ## to overcome this error with some CLM compsets: perl: warning: Please check that your locale settings
@@ -25,7 +25,7 @@ ENV LC_TYPE=en_US.UTF-8
 ENV USER=clmuser
 RUN echo "export USER=clmuser" > /etc/environment
 
-ARG CTSM_BRANCH=release-clm5.0.18
+ARG CTSM_BRANCH=release-clm5.0.17
 RUN echo $CTSM_BRANCH
 
 ## temporary fix here, needs to be in baseOS.  setting gmake
