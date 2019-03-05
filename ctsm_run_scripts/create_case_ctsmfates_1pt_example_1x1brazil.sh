@@ -9,6 +9,10 @@ echo $PWD
 for i in "$@"
 do
 case $i in
+    -cr=*|--case_root=*)
+    case_root="${I#*=}"
+    shift # past argument=value
+    ;;
     -sy=*|--start_year=*)
     start_year="${i#*=}"
     shift # past argument=value
@@ -35,6 +39,7 @@ case $i in
 esac
 done
 # check for missing inputs and set defaults
+case_root="${case_root:-/ctsm_output}"
 start_year="${start_year:-'1999-01-01'}"
 num_years="${num_years:-2}"
 rtype="${rtype:-startup}"
@@ -42,6 +47,7 @@ met_start="${met_start:-1999}"
 met_end="${met_end:-2001}"
 
 # show options
+echo "CASEROOT location = ${case_root}"
 echo "Model simulation start year  = ${start_year}"
 echo "Number of simulation years  = ${num_years}"
 echo "Run type = ${rtype}"
@@ -56,7 +62,7 @@ export CIME_MODEL=cesm							# which CIME model
 export MACH=${HOSTNAME}							# should match the default container hostname or that selected by the user with --hostname
 export RES=1x1_brazil							# Default 1 pt Brazil resolution for testing
 export COMP=I2000Clm50FatesGs						# FATES compset
-export CASEROOT=/ctsm_output						# don't change, container output location.  Can be redirected to a different location on the host
+export CASEROOT=${case_root}						# Container/model output location.  Can be redirected to a different location on the host
 export date_var=$(date +%s)						# auto info tag
 export CASE_NAME=${CASEROOT}/${MODEL_VERSION}_${date_var}_1x1brazil	# Output directory name
 
