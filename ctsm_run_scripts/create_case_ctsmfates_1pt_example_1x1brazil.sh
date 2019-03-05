@@ -10,7 +10,7 @@ for i in "$@"
 do
 case $i in
     -cr=*|--case_root=*)
-    case_root="${I#*=}"
+    case_root="${i#*=}"
     shift # past argument=value
     ;;
     -sy=*|--start_year=*)
