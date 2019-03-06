@@ -26,7 +26,7 @@ case $i in
     shift # past argument=value
     ;;
     -mets=*|--met_start=*)
-    met_start ="${i#*=}"
+    met_start="${i#*=}"
     shift # past argument with no value
     ;;
     -mete=*|--met_end=*)
