@@ -73,7 +73,7 @@ RUN cd /ctsm \
     && git checkout fates_next_api \
     #&& git -c http.sslVerify=false checkout -b ctsm sci.1.23.0_api.7.1.0
     #&& git -c http.sslVerify=false checkout -b ctsm \
-    #&& git -c http.sslVerify=false pull fates_next_api
+    #&& git -c http.sslVerify=false pull fates_next_api \
     && git describe \
     && cd /
 
