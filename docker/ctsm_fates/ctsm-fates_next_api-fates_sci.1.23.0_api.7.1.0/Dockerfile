@@ -56,20 +56,26 @@ RUN cd / \
 
     ## synchronize FATES code with CTSM fates_next_api branch
 RUN cd /ctsm/src/fates \
-    #&& git config "clmdocker_user@gmail.com" \
-    #&& git config --global "CLM Docker User" \
     && git -c http.sslVerify=false remote add ngeet_repo https://github.com/NGEET/fates.git \
+    && git remote -v \
     && git -c http.sslVerify=false fetch ngeet_repo \
-    && git -c http.sslVerify=false checkout -b fates \
-    #&& git -c http.sslVerify=false pull ngeet_repo master \
+    && git tag \
+    && git -c http.sslVerify=false checkout -b fates sci.1.23.0_api.7.1.0 \
+    && git describe \
     && cd /
 
     ## set CTSM branch to fates_next_api branch
 RUN cd /ctsm \
     && git remote -v \
     && git -c http.sslVerify=false fetch origin \
+    && git tag \
+    && git fetch origin fates_next_api:fates_next_api \
+    && git checkout fates_next_api \
+    #&& git -c http.sslVerify=false checkout -b ctsm sci.1.23.0_api.7.1.0
     #&& git -c http.sslVerify=false checkout -b ctsm \
     #&& git -c http.sslVerify=false pull fates_next_api
+    && git describe \
+    && cd /
 
     ## replace machines files - make sure they are still the correct ones
 RUN cd /ctsm/cime/config/cesm/machines/ \
@@ -78,5 +84,8 @@ RUN cd /ctsm/cime/config/cesm/machines/ \
     && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/cime_config_files/cesm/machines/config_compilers.xml \
     && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/cime_config_files/cesm/machines/config_machines.xml \
     && cd /
+
+    ## setup clmuser to use with docker - temporary hack, need to sort out how best to manage this
+RUN export USER=clmuser
 
 ### EOF
