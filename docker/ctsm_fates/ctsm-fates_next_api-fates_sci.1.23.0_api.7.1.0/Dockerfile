@@ -52,7 +52,9 @@ RUN cd / \
     && mkdir -p ctsm_run_scripts \
     && cd ctsm_run_scripts \
     && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/ctsm_run_scripts/create_case_ctsmfates_1pt_example_1x1brazil.sh \
-    && chmod 775 create_case_ctsmfates_1pt_example_1x1brazil.sh
+    && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/ctsm_run_scripts/create_case_ctsmfates_1pt_example_USNR1.sh \
+    && chmod 775 create_case_ctsmfates_1pt_example_1x1brazil.sh \
+    && chmod 775 create_case_ctsmfates_1pt_example_USNR1.sh
 
     ## synchronize FATES code with CTSM fates_next_api branch
 RUN cd /ctsm/src/fates \
@@ -71,9 +73,6 @@ RUN cd /ctsm \
     && git tag \
     && git fetch origin fates_next_api:fates_next_api \
     && git checkout fates_next_api \
-    #&& git -c http.sslVerify=false checkout -b ctsm sci.1.23.0_api.7.1.0
-    #&& git -c http.sslVerify=false checkout -b ctsm \
-    #&& git -c http.sslVerify=false pull fates_next_api \
     && git describe \
     && cd /
 
