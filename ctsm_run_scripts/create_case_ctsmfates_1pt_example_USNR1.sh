@@ -35,16 +35,12 @@ case_root="${case_root:-/ctsm_output}"
 start_year="${start_year:-'1999-01-01'}"
 num_years="${num_years:-2}"
 rtype="${rtype:-startup}"
-met_start="${met_start:-1999}"
-met_end="${met_end:-2001}"
 
 # show options
 echo "CASEROOT location = ${case_root}"
 echo "Model simulation start year  = ${start_year}"
 echo "Number of simulation years  = ${num_years}"
 echo "Run type = ${rtype}"
-echo "DATM_CLMNCEP_YR_START: "${met_start}
-echo "DATM_CLMNCEP_YR_END: "${met_end}
 
 # Setup simulation case
 export MODEL_SOURCE=/ctsm						# don't change, location in the container
@@ -56,7 +52,7 @@ export RES=f09_g16							# Default 1 pt Brazil resolution for testing
 export COMP=I2000Clm50FatesGs						# FATES compset
 export CASEROOT=${case_root}						# Container/model output location.  Can be redirected to a different location on the host
 export date_var=$(date +%s)						# auto info tag
-export CASE_NAME=${CASEROOT}/${MODEL_VERSION}_${date_var}_1x1brazil	# Output directory name
+export CASE_NAME=${CASEROOT}/${MODEL_VERSION}_${date_var}_1x1USNR1	# Output directory name
 
 # Define FATES parameter file here:
 export FATES_PARAM_FILE_PATH=/fates_parameter_files
@@ -185,7 +181,6 @@ echo "*** Update CLM && FATES parameter files ***"
 echo " "
 cat >> user_nl_clm <<EOF
 fates_paramfile = "${CASE_NAME}/${FATES_PARAM_FILE}"
-#paramfile = "${CASE_NAME}/${CLM_PARAM_FILE}"
 EOF
 
 echo *** Build case ***
