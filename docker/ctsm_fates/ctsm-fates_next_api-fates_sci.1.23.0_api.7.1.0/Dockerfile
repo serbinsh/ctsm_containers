@@ -85,6 +85,21 @@ RUN cd /ctsm/cime/config/cesm/machines/ \
     && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/cime_config_files/cesm/machines/config_machines.xml \
     && cd /
 
+    ## create 14 PFT parameter file for simulation
+RUN cd / \
+    && mkdir -p fates_parameter_files \
+    && ncgen -o fates_parameter_files/fates_params_14pfts.nc /ctsm/src/fates/parameter_files/fates_params_14pfts.cdl \
+    && cd /
+
+    ## copy in USNR1 example simulation data
+RUN cd / \
+    && mkdir -p ctsm_example_data \
+    && chown clmuser /ctsm_example_data \
+    && cd ctsm_example_data \
+    && wget https://github.com/serbinsh/ctsm_containers/raw/master/ctsm_example_data/USNR1/USNR1_CTSM_Example_Data.tar.gz \
+    && tar -zxvf USNR1_CTSM_Example_Data.tar.gz \
+    && rm USNR1_CTSM_Example_Data.tar.gz
+
     ## setup clmuser to use with docker - temporary hack, need to sort out how best to manage this
 RUN export USER=clmuser
 
