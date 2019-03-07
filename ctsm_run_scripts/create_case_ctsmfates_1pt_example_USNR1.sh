@@ -32,7 +32,7 @@ esac
 done
 # check for missing inputs and set defaults
 case_root="${case_root:-/ctsm_output}"
-start_year="${start_year:-'1999-01-01'}"
+start_year="${start_year:-'1998-01-01'}"
 num_years="${num_years:-2}"
 rtype="${rtype:-startup}"
 
