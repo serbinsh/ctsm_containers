@@ -101,6 +101,11 @@ RUN cd / \
     && tar -zxvf USNR1_CTSM_Example_Data.tar.gz \
     && rm USNR1_CTSM_Example_Data.tar.gz
 
+    ## copy in other useful scripts
+RUN cd / \
+    && cd /scripts \
+    && 
+
     ## setup clmuser to use with docker - temporary hack, need to sort out how best to manage this
 RUN export USER=clmuser
 
