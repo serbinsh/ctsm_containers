@@ -5,18 +5,13 @@
 FROM serbinsh/ctsm_containers:baseos-stable-gcc650
 MAINTAINER S.P. Serbin email: sserbin@bnl.gov
 
-## to overcome this error with some CLM compsets: perl: warning: Please check that your locale settings
-# 	LANGUAGE = (unset),
-#	LC_ALL = (unset),
-#	LANG = "en_US.UTF-8"
-RUN echo LANGUAGE="en_US.UTF-8" > /etc/default/locale
-RUN echo LANG="en_US.UTF-8" >> /etc/default/locale
-RUN echo LC_ALL="en_US.UTF-8" >> /etc/default/locale
-RUN echo LC_TYPE ="en_US.UTF-8" >> /etc/default/locale
-ENV LANGUAGE=en_US.UTF-8
-ENV LC_ALL=en_US.UTF-8
-ENV LANG=en_US.UTF-8
-ENV LC_TYPE=en_US.UTF-8
+    ## to overcome/squelch this error with some CLM compsets: perl: warning: Please check that your locale settings
+RUN echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen && \
+      locale-gen
+    ## Set default locale for the environment
+ENV LC_ALL C.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US.UTF-8
 
     ## For now this needs to be done so that CLM python build scripts can find os.user. BUT how do we then run with a different user?
     # when using the --user flag it doesnt set the ENV var USER=$USER.  Maybe create a script that runs first that sets depending
