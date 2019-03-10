@@ -61,9 +61,24 @@ RUN apt-get update -y \
     python3-pip \
     apt-utils \
     ftp \
-    apt-transport-https
+    apt-transport-https \
+    locales
 
-## compile openMPI
+    ## Install program to configure locales
+RUN dpkg-reconfigure locales && \
+  locale-gen C.UTF-8 && \
+    /usr/sbin/update-locale LANG=C.UTF-8
+RUN echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen && \
+      locale-gen
+   ## Set default locale for the environment
+ENV LC_ALL C.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US.UTF-8
+
+   ## check locales
+RUN locale -a
+
+   ## compile openMPI
 RUN echo "*** Compiling openMPI " ${OPENMPI_VERSION}
 RUN cd / \
     && wget https://download.open-mpi.org/release/open-mpi/v2.1/openmpi-${OPENMPI_VERSION}.tar.gz \
