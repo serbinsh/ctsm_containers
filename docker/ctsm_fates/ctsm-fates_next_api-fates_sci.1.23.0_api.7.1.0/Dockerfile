@@ -88,9 +88,10 @@ RUN cd / \
     && tar -zxvf USNR1_CTSM_Example_Data.tar.gz \
     && rm USNR1_CTSM_Example_Data.tar.gz
 
-    ## install needed python modules
+    ## install needed python modules - need to migrate scripts to use Python3 instead for LTS
 RUN cd / \
-    && pip2 install numpy scipy matplotlib
+    && pip2 install numpy scipy \
+    && pip2 install matplotlib==2.1.2
 
     ## copy in other useful scripts
 RUN cd / \
