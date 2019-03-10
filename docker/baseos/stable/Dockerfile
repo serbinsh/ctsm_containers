@@ -62,7 +62,8 @@ RUN apt-get update -y \
     python3-pip \
     apt-utils \
     ftp \
-    apt-transport-https
+    apt-transport-https \
+    locales
 
 ## Install program to configure locales
 RUN dpkg-reconfigure locales && \

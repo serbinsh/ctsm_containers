@@ -62,8 +62,23 @@ RUN apt-get update -y \
     python3-pip \
     apt-utils \
     ftp \
-    apt-transport-https
+    apt-transport-https \
+    locales
  
+## Install program to configure locales
+RUN dpkg-reconfigure locales && \
+  locale-gen C.UTF-8 && \
+    /usr/sbin/update-locale LANG=C.UTF-8
+RUN echo 'en_US.UTF-8 UTF-8' >> /etc/locale.gen && \
+      locale-gen
+## Set default locale for the environment
+ENV LC_ALL C.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US.UTF-8
+
+## check locales
+RUN locale -a
+
     ## Install Globus
 #RUN cd / \
 #    && wget http://toolkit.globus.org/ftppub/gt6/installers/repo/globus-toolkit-repo_latest_all.deb \

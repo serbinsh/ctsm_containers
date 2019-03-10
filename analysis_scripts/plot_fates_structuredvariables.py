@@ -19,7 +19,7 @@ from matplotlib.ticker import MaxNLocator
 ##  change the line below to point to the file that you've made,
 ##  which should be a concatenation of a bunch of FATES history files into a single file
 
-#### usage e.g. "python2.7 ~/scratch/CLM5FATES_1552052278_1x1PASLZ/run/all_years.nc"
+#### usage e.g. "python2.7 plot_fates_structuredvariables.py ~/scratch/CLM5FATES_1552052278_1x1PASLZ/run/all_years.nc"
 filename_in = sys.argv[1]
 if os.path.exists(filename_in):
     print os.path.basename(filename_in)
