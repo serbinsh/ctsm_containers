@@ -1,3 +1,6 @@
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*- 
+
 import os
 import sys
 import numpy as np
@@ -102,8 +105,8 @@ f1ax2.set_ylabel('Patch Age (yr)')
 
 # show the plot
 fig1.tight_layout()
-plt.show()
-
+#plt.show()
+plt.savefig('Figure_1.png')
 ############################################################
 ### next, look at the evolution of the plant size structure
 ############################################################
@@ -150,9 +153,8 @@ f2ax3.set_ylabel('Cohort Size (cm)')
 
 # show the plot
 fig2.tight_layout()
-plt.show()
-
-
+#plt.show()
+plt.savefig('Figure_2.png')
 
 ############################################################
 ### next, look at the growth and mortality rates
@@ -205,4 +207,5 @@ f3ax3.set_ylabel('Cohort Size (cm)')
 
 # show the plot
 fig3.tight_layout()
-plt.show()
+#plt.show()
+plt.savefig('Figure_3.png')
