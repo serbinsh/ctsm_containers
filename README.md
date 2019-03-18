@@ -80,7 +80,7 @@ Take note of the auto-generated output folder in ~/scratch **CLM5_1552924779**
 4) Once the build is finished, run the case:
 
 ```
-docker run -t -i --hostname=modex --user clmuser -v ~/Data/cesm_input_data:/data -v ~/scratch:/ctsm_output serbinsh/ctsm_containers:ctsm-release-clm5.0.17 /bin/sh -c 'cd /ctsm_output/CLM5_CLM5_1552924779/ && ./case.submit'
+docker run -t -i --hostname=modex --user clmuser -v ~/Data/cesm_input_data:/data -v ~/scratch:/ctsm_output serbinsh/ctsm_containers:ctsm-release-clm5.0.15 /bin/sh -c 'cd /ctsm_output/CLM5_CLM5_1552924779/ && ./case.submit'
 ```
 
 <br>
