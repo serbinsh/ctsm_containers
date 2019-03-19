@@ -1,6 +1,6 @@
-# ctsm_containers
+# Dockerized versions of the CTSM and CTSM-FATES models 
+<br>
 
-A repository of CTSM containers
 
 Docker hub: https://hub.docker.com/r/serbinsh/ctsm_containers
 
