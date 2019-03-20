@@ -99,7 +99,7 @@ RUN cd / \
     && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/analysis_scripts/plot_fates_structuredvariables.py \
     && chmod 775 plot_fates_structuredvariables.py
 
-    ## setup clmuser to use with docker - temporary hack, need to sort out how best to manage this
+    ## setup clmuser to use with docker
 RUN export USER=clmuser
 
 ### EOF
