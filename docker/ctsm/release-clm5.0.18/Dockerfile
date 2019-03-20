@@ -5,20 +5,6 @@
 FROM serbinsh/ctsm_containers:baseos-stable-gcc550
 MAINTAINER S.P. Serbin email: sserbin@bnl.gov
 
-## to overcome this error with some CLM compsets: perl: warning: Please check that your locale settings
-# 	LANGUAGE = (unset),
-#	LC_ALL = (unset),
-#	LANG = "en_US.UTF-8"
-
-RUN echo LANGUAGE="en_US.UTF-8" > /etc/default/locale
-RUN echo LANG="en_US.UTF-8" >> /etc/default/locale
-RUN echo LC_ALL="en_US.UTF-8" >> /etc/default/locale
-RUN echo LC_TYPE ="en_US.UTF-8" >> /etc/default/locale
-ENV LANGUAGE=en_US.UTF-8
-ENV LC_ALL=en_US.UTF-8
-ENV LANG=en_US.UTF-8
-ENV LC_TYPE=en_US.UTF-8
-
 ## For now this needs to be done so that CLM python build scripts can find os.user. BUT how do we then run with a different user?
 # when using the --user flag it doesnt set the ENV var USER=$USER.  Maybe create a script that runs first that sets depending
 # on what --user XXXXX was set to at command/run?
@@ -28,18 +14,17 @@ RUN echo "export USER=clmuser" > /etc/environment
 ARG CTSM_BRANCH='release-clm5.0.18'
 RUN echo $CTSM_BRANCH
 
-## temporary fix here, needs to be in baseOS.  setting gmake
+    ## temporary fix here, needs to be in baseOS.  setting gmake
 RUN ln -s /usr/bin/make /usr/bin/gmake
 
-## setup clmuser to use with docker - temporary hack, need to sort out how best to manage this
-RUN export USER=clmuser
-
-## create data mount point in container - should change this to /mnt or something more generic in machines files
+    ## create data mount point in container - could change this to /mnt or something more generic in machines files
 RUN cd / \
     && mkdir -p data \
-    && mkdir -p ctsm_output
+    && mkdir -p ctsm_output \
+    && mkdir -p scripts 
 RUN chown clmuser /data
 RUN chown clmuser /ctsm_output
+RUN chown clmuser /scripts
 
     ## Checkout CTSM model
 RUN echo "*** Checkout CTSM model"
@@ -63,6 +48,7 @@ RUN cd / \
     && chmod 775 create_case_custom_res_compset.sh \
     && chmod 775 create_case_1pt_example_USNR1.sh
 
+    ## Create US-NR1 example data directory
 RUN cd / \
     && mkdir -p ctsm_example_data \
     && chown clmuser /ctsm_example_data \
@@ -70,5 +56,9 @@ RUN cd / \
     && wget https://github.com/serbinsh/ctsm_containers/raw/master/ctsm_example_data/USNR1/USNR1_CTSM_Example_Data.tar.gz \
     && tar -zxvf USNR1_CTSM_Example_Data.tar.gz \
     && rm USNR1_CTSM_Example_Data.tar.gz
+
+
+    ## setup clmuser to use with docker
+RUN export USER=clmuser
 
 ### EOF
