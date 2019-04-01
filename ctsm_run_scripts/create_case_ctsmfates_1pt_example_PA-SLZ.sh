@@ -68,8 +68,8 @@ export date_var=$(date +%s)						# auto info tag
 export CASE_NAME=${CASEROOT}/${MODEL_VERSION}_${date_var}_1x1PASLZ	# Output directory name
 
 # Define FATES parameter file here: - not yet
-#export FATES_PARAM_FILE_PATH=/fates_parameter_files
-#export FATES_PARAM_FILE=fates_params_14pfts.nc
+export FATES_PARAM_FILE_PATH=/fates_parameter_files
+export FATES_PARAM_FILE=fates_params_default_2trop.c190205.nc
 
 # Define forcing data for run
 export CLM_SURFDAT_DIR=/data/site_data/${SITE_NAME}
@@ -94,12 +94,12 @@ cd ${CASE_NAME}
 echo ${PWD}
 
 # Copy parameter file to case
-#echo "*** Copy FATES parameter file ***"
-#echo " "
-#cp ${FATES_PARAM_FILE_PATH}/${FATES_PARAM_FILE} .
-#echo "*** Copy CLM parameter file ***"
-#echo " "
-#cp ${CLM_PARAM_FILE_PATH}/${CLM_PARAM_FILE} .
+echo "*** Copy FATES parameter file ***"
+echo " "
+cp ${FATES_PARAM_FILE_PATH}/${FATES_PARAM_FILE} .
+echo "*** Copy CLM parameter file ***"
+echo " "
+cp ${CLM_PARAM_FILE_PATH}/${CLM_PARAM_FILE} .
 # =======================================================================================
 
 
@@ -167,26 +167,19 @@ cat >> user_nl_clm <<EOF
 fsurdat = '${CLM_SURFDAT_DIR}/${CLM_USRDAT_SURDAT}'
 hist_empty_htapes = .true.
 hist_fincl1       = 'NEP','GPP','NPP','TLAI','ELAI','TSOI_10CM','QVEGT','EFLX_LH_TOT','AR',\
-'HR','ED_biomass','ED_bleaf','ED_balive','GPP_BY_AGE','PATCH_AREA_BY_AGE','CANOPY_AREA_BY_AGE',\
+'HR','ED_biomass','ED_bleaf','ED_balive','DDBH_SCPF','BA_SCPF','NPLANT_SCPF','M1_SCPF','M2_SCPF',\
+'M3_SCPF','M4_SCPF','M5_SCPF','M6_SCPF','GPP_BY_AGE','PATCH_AREA_BY_AGE','CANOPY_AREA_BY_AGE',\
 'BA_SCLS','NPLANT_CANOPY_SCLS','NPLANT_UNDERSTORY_SCLS','DDBH_CANOPY_SCLS','DDBH_UNDERSTORY_SCLS',\
 'MORTALITY_CANOPY_SCLS','MORTALITY_UNDERSTORY_SCLS','WIND','ZBOT','FSDS','RH','TBOT','PBOT','QBOT','RAIN','FLDS'
 hist_mfilt             = 8760
 hist_nhtfrq            = -1
 EOF
 
-#cat >> user_nl_clm <<EOF
-#fsurdat = '/ctsm_example_data/surfdata_0.9x1.25_NR1.nc'
-#hist_empty_htapes = .true.
-#hist_fincl1='NEP','NPP','GPP','TLAI','ELAI','TSOI_10CM','QVEGT','EFLX_LH_TOT','AR','HR','ED_biomass','ED_bleaf','ED_balive','DDBH_SCPF','BA_SCPF','NPLANT_SCPF','M1_SCPF','M2_SCPF','M3#_SCPF','M4_SCPF','M5_SCPF','M6_SCPF','GPP_BY_AGE','PATCH_AREA_BY_AGE','CANOPY_AREA_BY_AGE','BA_SCLS','NPLANT_CANOPY_SCLS','NPLANT_UNDERSTORY_SCLS','DDBH_CANOPY_SCLS','DDBH_UNDERSTORY_#SCLS','MORTALITY_CANOPY_SCLS','MORTALITY_UNDERSTORY_SCLS','WIND','ZBOT','FSDS','RH','TBOT','PBOT','QBOT','RAIN','FLDS'
-#hist_mfilt             = 8760
-#hist_nhtfrq            = -1
-#EOF
-
-#echo "*** Update CLM && FATES parameter files ***"
-#echo " "
-#cat >> user_nl_clm <<EOF
-#fates_paramfile = "${CASE_NAME}/${FATES_PARAM_FILE}"
-#EOF
+echo "*** Update CLM && FATES parameter files ***"
+echo " "
+cat >> user_nl_clm <<EOF
+fates_paramfile = "${CASE_NAME}/${FATES_PARAM_FILE}"
+EOF
 
 # MODIFY THE DATM NAMELIST (DANGER ZONE - USERS BEWARE CHANGING)
 
@@ -196,19 +189,6 @@ EOF
 
 echo "*** Running case.setup ***"
 ./case.setup
-
-## define met params
-#cat >> user_nl_datm <<EOF
-#dtlimit  = 1.0e9, 1.0e9, 1.0e9
-#streams = 'datm.streams.txt.CLMGSWP3v1.Solar 1998 1998 2010',
-#          'datm.streams.txt.CLMGSWP3v1.Precip 1998 1998 2010',
-#          'datm.streams.txt.CLMGSWP3v1.TPQW 1998 1998 2010',
-#mapalgo = 'nn', 'nn', 'nn'
-#EOF
-
-## define stream files and edit
-#cp /ctsm_example_data/user_datm.streams.txt.CLMGSWP3v1.* .
-
 
 # HERE WE NEED TO MODIFY THE STREAM FILE (DANGER ZONE - USERS BEWARE CHANGING)
 ./preview_namelists
