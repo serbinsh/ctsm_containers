@@ -69,7 +69,7 @@ export CASE_NAME=${CASEROOT}/${MODEL_VERSION}_${date_var}_1x1PASLZ	# Output dire
 
 # Define FATES parameter file here: - not yet
 export FATES_PARAM_FILE_PATH=/fates_parameter_files
-export FATES_PARAM_FILE=fates_params_default_2trop.c190205.nc
+export FATES_PARAM_FILE=fates_params_2trop.c190205.nc
 
 # Define forcing data for run
 export CLM_SURFDAT_DIR=/data/site_data/${SITE_NAME}
