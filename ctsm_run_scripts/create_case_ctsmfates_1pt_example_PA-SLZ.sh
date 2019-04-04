@@ -166,11 +166,12 @@ echo "*** Modifying xmls  ***"
 cat >> user_nl_clm <<EOF
 fsurdat = '${CLM_SURFDAT_DIR}/${CLM_USRDAT_SURDAT}'
 hist_empty_htapes = .true.
-hist_fincl1       = 'NEP','GPP','NPP','TLAI','ELAI','TSOI_10CM','QVEGT','EFLX_LH_TOT','AR',\
+hist_fincl1       = 'NEP','GPP','NPP','AGB','TOTECOSYSC','TLAI','ELAI','TSOI_10CM','QVEGT','EFLX_LH_TOT','AR',\
 'HR','ED_biomass','ED_bleaf','ED_balive','DDBH_SCPF','BA_SCPF','NPLANT_SCPF','M1_SCPF','M2_SCPF',\
 'M3_SCPF','M4_SCPF','M5_SCPF','M6_SCPF','GPP_BY_AGE','PATCH_AREA_BY_AGE','CANOPY_AREA_BY_AGE',\
 'BA_SCLS','NPLANT_CANOPY_SCLS','NPLANT_UNDERSTORY_SCLS','DDBH_CANOPY_SCLS','DDBH_UNDERSTORY_SCLS',\
-'MORTALITY_CANOPY_SCLS','MORTALITY_UNDERSTORY_SCLS','WIND','ZBOT','FSDS','RH','TBOT','PBOT','QBOT','RAIN','FLDS'
+'MORTALITY_CANOPY_SCLS','MORTALITY_UNDERSTORY_SCLS','C_STOMATA','WIND','ZBOT','FSDS','RH','TBOT','PBOT','QBOT',\
+'RAIN','FLDS'
 hist_mfilt             = 8760
 hist_nhtfrq            = -1
 EOF
