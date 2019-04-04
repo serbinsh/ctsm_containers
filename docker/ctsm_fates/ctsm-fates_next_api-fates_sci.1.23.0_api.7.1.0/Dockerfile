@@ -42,8 +42,10 @@ RUN cd / \
     && cd ctsm_run_scripts \
     && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/ctsm_run_scripts/create_case_ctsmfates_1pt_example_1x1brazil.sh \
     && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/ctsm_run_scripts/create_case_ctsmfates_1pt_example_USNR1.sh \
+    && wgethttps://raw.githubusercontent.com/serbinsh/ctsm_containers/master/ctsm_run_scripts/create_case_ctsmfates_1pt_example_PA-SLZ.sh \
     && chmod 775 create_case_ctsmfates_1pt_example_1x1brazil.sh \
-    && chmod 775 create_case_ctsmfates_1pt_example_USNR1.sh
+    && chmod 775 create_case_ctsmfates_1pt_example_USNR1.sh \
+    && chmod 775 create_case_ctsmfates_1pt_example_PA-SLZ.sh
 
     ## synchronize FATES code with CTSM fates_next_api branch
 RUN cd /ctsm/src/fates \
