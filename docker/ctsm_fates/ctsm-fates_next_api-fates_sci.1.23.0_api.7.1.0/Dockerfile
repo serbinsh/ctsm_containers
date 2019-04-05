@@ -11,7 +11,7 @@ MAINTAINER S.P. Serbin email: sserbin@bnl.gov
 ENV USER=clmuser
 RUN echo "export USER=clmuser" > /etc/environment
 
-    ## temporary fix here, needs to be in baseOS.  setting gmake
+    ## setting gmake
 RUN ln -s /usr/bin/make /usr/bin/gmake
 
     ## setup clmuser to use with docker - temporary hack, need to sort out how best to manage this
