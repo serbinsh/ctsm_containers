@@ -11,7 +11,7 @@ MAINTAINER S.P. Serbin email: sserbin@bnl.gov
 ENV USER=clmuser
 RUN echo "export USER=clmuser" > /etc/environment
 
-    ## temporary fix here, needs to be in baseOS.  setting gmake
+    ## setting gmake
 RUN ln -s /usr/bin/make /usr/bin/gmake
 
     ## setup clmuser to use with docker - temporary hack, need to sort out how best to manage this
@@ -42,8 +42,12 @@ RUN cd / \
     && cd ctsm_run_scripts \
     && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/ctsm_run_scripts/create_case_ctsmfates_1pt_example_1x1brazil.sh \
     && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/ctsm_run_scripts/create_case_ctsmfates_1pt_example_USNR1.sh \
+    && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/ctsm_run_scripts/create_case_ctsmfates_1pt_example_PA-SLZ.sh \
+    && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/ctsm_run_scripts/create_case_ctsmfates_1pt_example_PA-Bar.sh \
     && chmod 775 create_case_ctsmfates_1pt_example_1x1brazil.sh \
-    && chmod 775 create_case_ctsmfates_1pt_example_USNR1.sh
+    && chmod 775 create_case_ctsmfates_1pt_example_USNR1.sh \
+    && chmod 775 create_case_ctsmfates_1pt_example_PA-SLZ.sh \
+    && chmod 775 create_case_ctsmfates_1pt_example_PA-Bar.sh
 
     ## synchronize FATES code with CTSM fates_next_api branch
 RUN cd /ctsm/src/fates \
