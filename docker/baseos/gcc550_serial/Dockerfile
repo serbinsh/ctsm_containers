@@ -91,20 +91,20 @@ RUN locale -a
 #    globus-data-management-client
 
 ## compile openMPI
-#RUN echo "*** Compiling openMPI " ${OPENMPI_VERSION}
-#RUN cd / \
-#    && wget https://download.open-mpi.org/release/open-mpi/v2.1/openmpi-${OPENMPI_VERSION}.tar.gz \
-#    && tar -zxvf openmpi-${OPENMPI_VERSION}.tar.gz \
-#    && cd openmpi-${OPENMPI_VERSION} \
-#    && export PATH=/usr/local/bin:$PATH \
-#    && export LD_LIBRARY_PATH=/usr/local/lib64:$LD_LIBRARY_PATH \
-#    && ./configure --enable-static \
-#    && make \
-#    && make install \
-#    && cd / \
-#    && rm -r openmpi-${OPENMPI_VERSION} \
-#    && rm openmpi-${OPENMPI_VERSION}.tar.gz \
-#    && ldconfig
+RUN echo "*** Compiling openMPI " ${OPENMPI_VERSION}
+RUN cd / \
+    && wget https://download.open-mpi.org/release/open-mpi/v2.1/openmpi-${OPENMPI_VERSION}.tar.gz \
+    && tar -zxvf openmpi-${OPENMPI_VERSION}.tar.gz \
+    && cd openmpi-${OPENMPI_VERSION} \
+    && export PATH=/usr/local/bin:$PATH \
+    && export LD_LIBRARY_PATH=/usr/local/lib64:$LD_LIBRARY_PATH \
+    && ./configure --enable-static \
+    && make \
+    && make install \
+    && cd / \
+    && rm -r openmpi-${OPENMPI_VERSION} \
+    && rm openmpi-${OPENMPI_VERSION}.tar.gz \
+    && ldconfig
 
 ## Compile Expat XML parser
 RUN echo "*** Compiling Expat XML parser"
