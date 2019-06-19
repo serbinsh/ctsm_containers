@@ -47,7 +47,7 @@ echo "*** Modifying xmls  ***"
 #./xmlchange --file env_build.xml --id MPILIB=mpi-serial --val TRUE
 ./xmlchange --id DEBUG --val FALSE
 ./xmlchange --file env_run.xml --id PIO_DEBUG_LEVEL --val 0
-./xmlchange --id STOP_N --val 5
+./xmlchange --id STOP_N --val 2
 ./xmlchange --id RUN_STARTDATE --val '2000-01-01'
 ./xmlchange --id STOP_OPTION --val nyears
 ./xmlchange --id REST_N --val 1
