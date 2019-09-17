@@ -95,15 +95,15 @@ RUN cd / \
     && rm USNR1_CTSM_Example_Data.tar.gz
 
     ## install needed python modules - need to migrate scripts to use Python3 instead for LTS
-RUN cd / \
-    && pip2 install numpy scipy \
-    && pip2 install matplotlib==2.1.2
+#RUN cd / \
+#    && pip2 install numpy scipy \
+#    && pip2 install matplotlib==2.1.2
 
-    ## copy in other useful scripts
+#    ## copy in other useful scripts
 RUN cd / \
-    && cd /scripts \
-    && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/analysis_scripts/plot_fates_structuredvariables.py \
-    && chmod 775 plot_fates_structuredvariables.py
+#    && cd /scripts \
+#    && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/analysis_scripts/plot_fates_structuredvariables.py \
+#    && chmod 775 plot_fates_structuredvariables.py
 
     ## setup clmuser to use with docker
 RUN export USER=clmuser
