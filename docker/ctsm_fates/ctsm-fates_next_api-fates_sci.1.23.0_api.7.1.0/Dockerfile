@@ -73,8 +73,8 @@ RUN cd /ctsm \
 RUN cd /ctsm/cime/config/cesm/machines/ \
     && rm config_compilers.xml \
     && rm config_machines.xml \
-    && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/cime_config_files/cesm/machines/config_compilers.xml \
-    && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/cime_config_files/cesm/machines/config_machines.xml \
+    && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/cime_config_files/cesm/machines/docker/config_compilers.xml \
+    && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/cime_config_files/cesm/machines/docker/config_machines.xml \
     && cd /
 
     ## create 14 PFT parameter file for simulation
