@@ -14,7 +14,7 @@ export MODEL_SOURCE=/ctsm
 export MODEL_VERSION=CLM5
 export CLM_HASH=`(cd ${MODEL_SOURCE};git log -n 1 --pretty=%h)`
 export CIME_MODEL=cesm
-export MACH=modex
+export MACH=${HOSTNAME}
 export RES=f09_g16
 #export COMP=I2000Clm50BgcCrop
 export COMP=2000_DATM%GSWP3v1_CLM50%BGC-CROP_SICE_SOCN_MOSART_SGLC_SWAV
