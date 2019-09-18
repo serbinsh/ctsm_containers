@@ -100,7 +100,7 @@ RUN cd / \
 #    && pip2 install matplotlib==2.1.2
 
 #    ## copy in other useful scripts
-RUN cd / \
+#RUN cd / \
 #    && cd /scripts \
 #    && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/analysis_scripts/plot_fates_structuredvariables.py \
 #    && chmod 775 plot_fates_structuredvariables.py
