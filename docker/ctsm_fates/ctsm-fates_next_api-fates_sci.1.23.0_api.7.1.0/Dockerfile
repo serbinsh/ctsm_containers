@@ -59,12 +59,13 @@ RUN cd /ctsm/src/fates \
     && git describe \
     && cd /
 
-    ## set CTSM branch to fates_next_api branch
+    ## set CTSM branch to fates_next_api branch: use specific git hash version
 RUN cd /ctsm \
     && git remote -v \
     && git -c http.sslVerify=false fetch origin \
     && git tag \
-    && git fetch origin fates_next_api:fates_next_api \
+#    && git fetch origin fates_next_api:fates_next_api \
+    && git fetch origin e8623043e3365e86c2cecea1d475324e9a8e2da3:fates_next_api \
     && git checkout fates_next_api \
     && git describe \
     && cd /
