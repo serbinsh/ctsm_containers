@@ -26,18 +26,6 @@ RUN chown clmuser /data
 RUN chown clmuser /ctsm_output
 RUN chown clmuser /scripts
 
-    ## Checkout CTSM model - sync the version we need for this build
-RUN echo "*** Checkout CTSM model"
-RUN cd / \
-    && git -c http.sslVerify=false clone https://github.com/ESCOMP/ctsm.git \
-    && cd /ctsm \
-    && git -c http.sslVerify=false fetch origin \
-    && git tag \
-    && git fetch origin fates_next_api:temp \
-    && git checkout temp \
-    && ./manage_externals/checkout_externals \
-
-
     ## Checkout CTSM model
 RUN echo "*** Checkout CTSM model"
 RUN cd / \
