@@ -26,24 +26,19 @@ RUN chown clmuser /data
 RUN chown clmuser /ctsm_output
 RUN chown clmuser /scripts
 
-    ## Checkout CTSM model - sync the version we need for this build
+    ## Checkout CTSM model - sync the version we need for this build. This can be simplified if we move to a newer version of CTSM/FATES
 RUN echo "*** Checkout CTSM model"
 RUN cd / \
     && git -c http.sslVerify=false clone https://github.com/ESCOMP/ctsm.git \
     && cd /ctsm \
     && git -c http.sslVerify=false fetch origin \
     && git tag \
-    && git fetch origin fates_next_api:temp \
+    && git fetch origin 320a80dc9858d79a9f89d3ea580faf6261a08229:temp \
     && git checkout temp \
     && ./manage_externals/checkout_externals \
-
-
-    ## Checkout CTSM model
-RUN echo "*** Checkout CTSM model"
-RUN cd / \
-    && git -c http.sslVerify=false clone https://github.com/ESCOMP/ctsm.git \
-    && cd /ctsm \
-    && ./manage_externals/checkout_externals \
+    && git fetch origin e8623043e3365e86c2cecea1d475324e9a8e2da3:fates_next_api \
+    && git checkout fates_next_api \
+    && git describe \
     && cd cime/config/cesm/machines/ \
     && rm config_compilers.xml \
     && rm config_machines.xml \
@@ -57,7 +52,6 @@ RUN cd / \
     && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/ctsm_run_scripts/create_case_ctsmfates_1pt_example_PA-SLZ.sh \
     && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/ctsm_run_scripts/create_case_ctsmfates_1pt_example_PA-Bar.sh \
     && chmod 775 create_case_ctsmfates_1pt_example_1x1brazil.sh \
-    && chmod 775 create_case_ctsmfates_1pt_example_USNR1.sh \
     && chmod 775 create_case_ctsmfates_1pt_example_PA-SLZ.sh \
     && chmod 775 create_case_ctsmfates_1pt_example_PA-Bar.sh
 
@@ -69,25 +63,6 @@ RUN cd /ctsm/src/fates \
     && git tag \
     && git -c http.sslVerify=false checkout -b fates sci.1.23.0_api.7.1.0 \
     && git describe \
-    && cd /
-
-    ## set CTSM branch to fates_next_api branch: use specific git hash version
-RUN cd /ctsm \
-    && git remote -v \
-    && git -c http.sslVerify=false fetch origin \
-    && git tag \
-#    && git fetch origin fates_next_api:fates_next_api \
-    && git fetch origin e8623043e3365e86c2cecea1d475324e9a8e2da3:fates_next_api \
-    && git checkout fates_next_api \
-    && git describe \
-    && cd /
-
-    ## replace machines files - make sure they are still the correct ones
-RUN cd /ctsm/cime/config/cesm/machines/ \
-    && rm config_compilers.xml \
-    && rm config_machines.xml \
-    && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/cime_config_files/cesm/machines/docker/config_compilers.xml \
-    && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/cime_config_files/cesm/machines/docker/config_machines.xml \
     && cd /
 
     ## create 14 PFT parameter file for simulation
