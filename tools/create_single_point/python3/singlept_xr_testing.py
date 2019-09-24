@@ -81,14 +81,18 @@ datm_eyr=1990
 
 #--  Modify landunit structure
 overwrite_single_pft = True
-dominant_pft         = 8 #BDF
+dominant_pft         = 7 #BDF
 zero_nonveg_pfts     = True
 uniform_snowpack     = False
 no_saturation_excess = False
 
 #--  Specify input and output directories
-dir_output='/Users/shawnserbin/Data/cesm_input_data/single_point/'
-dir_input_datm='/Users/shawnserbin/Data/cesm_input_data/atm/datm7/atm_forcing.datm7.GSWP3.0.5d.v1.c170516/'
+dir_output = '/Users/sserbin/Data/cesm_input_data/single_point/'
+os.makedirs(dir_output, exist_ok=True)
+
+# -- input datm
+#dir_input_datm='/Users/shawnserbin/Data/cesm_input_data/atm/datm7/atm_forcing.datm7.GSWP3.0.5d.v1.c170516/'
+dir_input_datm='/Volumes/data/Model_Data/cesm_input_datasets/atm/datm7/atm_forcing.datm7.GSWP3.0.5d.v1.c170516/'
 dir_output_datm=dir_output + 'datmdata/'
 
 #--  Set input and output filenames
@@ -101,12 +105,13 @@ x=x2.communicate()
 timetag = x[0].strip()
 
 #--  Specify land domain file  ---------------------------------
-fdomain  = '/Users/shawnserbin/Data/cesm_input_data/share/domains/domain.lnd.fv0.9x1.25_gx1v6.090309.nc'
-#fdomain2 = dir_output + 'domain.lnd.fv0.9x1.25_gx1v6.'+tag+'.090309.nc'
-fdomain2 = dir_output + 'domain.lnd.fv0.9x2.5_gx1v6.'+tag+'_090309.nc'
+fdomain  = '/Volumes/data/Model_Data/cesm_input_datasets/share/domains/domain.lnd.fv0.9x1.25_gx1v6.090309.nc'
+fdomain2 = dir_output + 'domain.lnd.fv0.9x1.25_gx1v6.'+tag+'.090309.nc'
+#fdomain2 = dir_output + 'domain.lnd.fv0.9x2.5_gx1v6.'+tag+'_090309.nc'
 
 #--  Specify surface data file  --------------------------------
-fsurf    = '/Users/shawnserbin/Data/cesm_input_data/lnd/clm2/surfdata_map/surfdata_0.9x1.25_78pfts_CMIP6_simyr2000_c170824.nc'
+#fsurf    = '/Users/shawnserbin/Data/cesm_input_data/lnd/clm2/surfdata_map/surfdata_0.9x1.25_78pfts_CMIP6_simyr2000_c170824.nc'
+fsurf    = '/Volumes/data/Model_Data/cesm_input_datasets/lnd/clm2/surfdata_map/surfdata_0.9x1.25_78pfts_CMIP6_simyr2000_c170824.nc'
 #fsurf2   = dir_output + 'surfdata_0.9x1.25_16pfts_CMIP6_simyr2000_'+tag+'.c170706.nc'
 fsurf2   = dir_output + 'surfdata_0.9x1.25_78pfts_CMIP6_simyr2000_'+tag+'_c170824.nc'
 
@@ -115,7 +120,8 @@ fluse    = '/glade/p/cesmdata/cseg/inputdata/lnd/clm2/surfdata_map/landuse.times
 fluse2   = dir_output + 'landuse.timeseries_1.9x2.5_hist_78pfts_CMIP6_simyr1850-2015_'+tag+'.c170824.nc'
 
 #--  Specify datm domain file  ---------------------------------
-fdatmdomain = '/Users/shawnserbin/Data/cesm_input_data/atm/datm7/atm_forcing.datm7.GSWP3.0.5d.v1.c170516/domain.lnd.360x720_gswp3.0v1.c170606.nc'
+#fdatmdomain = '/Users/shawnserbin/Data/cesm_input_data/atm/datm7/atm_forcing.datm7.GSWP3.0.5d.v1.c170516/domain.lnd.360x720_gswp3.0v1.c170606.nc'
+fdatmdomain = '/Volumes/data/Model_Data/cesm_input_datasets/atm/datm7/atm_forcing.datm7.GSWP3.0.5d.v1.c170516/domain.lnd.360x720_gswp3.0v1.c170606.nc'
 fdatmdomain2  = dir_output_datm+'domain.lnd.360x720_gswp3.0v1.'+tag+'_c170606.nc'
 
 #--  Create CTSM domain file
@@ -141,17 +147,18 @@ if create_domain:
     wfile=fdomain2
 
     # for debugging
-    mprint(f3)
+    #mprint(f3)
     
     # mode 'w' overwrites file
+    print('**** Write domain file to output directory')
     f3.to_netcdf(path=wfile, mode='w')
     mprint('created file '+fdomain2)
     f1.close(); f2.close(); f3.close()
 
 #--  Create CTSM surface data file
 if create_surfdata:
-    f1  = xr.open_dataset(fsurf, autoclose="True")
-    #f1  = xr.open_mfdataset(fsurf)
+    f1  = xr.open_dataset(fsurf, cache=True)
+    #f1  = xr.load_dataset(fsurf)
     # create 1d variables
     lon0=np.asarray(f1['LONGXY'][0,:])
     lon=xr.DataArray(lon0,name='lon',dims='lsmlon',coords={'lsmlon':lon0})
@@ -165,23 +172,32 @@ if create_surfdata:
     f3 = f2.sel(lsmlon=plon,lsmlat=plat,method='nearest')
     # expand dimensions
     f3 = f3.expand_dims(['lsmlat','lsmlon'])
-    #f4 = f3.expand_dims(['lsmlat','lsmlon']).copy()   # do we need to create a copy?
-    #f4 = f3.copy(deep=False)
-    
-    # below for debugging - show surfdat file info
-    mprint(f3)
-    #mprint(f3['PCT_NAT_PFT'])
-    #mprint(f3['PCT_NAT_PFT'][:,:,:])
-    #mprint(f3['PCT_NAT_PFT'][:,:,dominant_pft])
-    #mprint(f4['PCT_NAT_PFT'][:,:,:])
-    #mprint(f4)
-
+ 
     # modify surface data properties
     if overwrite_single_pft:
-        f3['PCT_NAT_PFT'][:,:,:] = 0
+        #f3.PCT_NAT_PFT[:,:,:] = 0
+        #f3['PCT_NAT_PFT'][:,:,:] = 0
+        f3['PCT_NAT_PFT'] = xr.where(f3['PCT_NAT_PFT']>0, 0, 0)
         f3['PCT_NAT_PFT'][:,:,dominant_pft] = 100
+        # for debugging - to check modification is working properly
+        mprint(f3)
+        #mprint(f3['PCT_NAT_PFT'][:,:,dominant_pft])
     if zero_nonveg_pfts:
-        f3['PCT_NATVEG'][:,:]  = 100
+        #mprint(f3['PCT_NATVEG'])
+        #f3['PCT_NATVEG'][:,:]  = 100
+        #f3.loc['PCT_NATVEG',['lsmlat','lsmlon']]  = 100
+        #f3['PCT_NATVEG'] = 100
+        #f3['PCT_NATVEG'].loc[dict(lsmlon='lsmlon', lsmlat='lsmlat')] = 100
+        #f3['PCT_NATVEG'].loc[dict('lsmlon', 'lsmlat')] = 100
+        #f3['PCT_NATVEG']['lsmlon', 'lsmlat'] = 100
+        #f3['PCT_NATVEG'] = 100
+        mprint(f3['PCT_NATVEG'][:,:])
+        mprint(f3['PCT_NATVEG'])
+
+
+
+
+
         f3['PCT_CROP'][:,:]    = 0
         f3['PCT_LAKE'][:,:]    = 0.
         f3['PCT_WETLAND'][:,:] = 0.
