@@ -5,6 +5,7 @@
 #  Import libraries
 import sys
 import os
+from os.path import expanduser
 from getpass import getuser
 import string
 import subprocess
@@ -87,8 +88,10 @@ uniform_snowpack     = False
 no_saturation_excess = False
 
 #--  Specify input and output directories
-dir_output = '/Users/sserbin/Data/cesm_input_data/single_point/'
-os.makedirs(dir_output, exist_ok=True)
+dir_output = 'Data/cesm_input_data/single_point/'
+home = expanduser('~')
+dir_output = os.path.join(home,dir_output)
+os.makedirs(os.path.dirname(dir_output), exist_ok=True)
 
 # -- input datm
 #dir_input_datm='/Users/shawnserbin/Data/cesm_input_data/atm/datm7/atm_forcing.datm7.GSWP3.0.5d.v1.c170516/'
