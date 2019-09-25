@@ -136,10 +136,10 @@ if create_domain:
     lon=xr.DataArray(lon0,name='lon',dims='ni',coords={'ni':lon0})
     lat=xr.DataArray(lat0,name='lat',dims='nj',coords={'nj':lat0})
     # assign() not working on cheyenne
-    #f2=f1.assign({'lon':lon,'lat':lat})
-    f2=f1.assign()
-    f2['lon'] = lon
-    f2['lat'] = lat
+    f2=f1.assign({'lon':lon,'lat':lat})
+    #f2=f1.assign()
+    #f2['lon'] = lon
+    #f2['lat'] = lat
     #f2.reset_coords(['xc','yc'],inplace=True)
     f2.reset_coords(['xc','yc'])
     # extract gridcell closest to plon/plat
@@ -167,10 +167,10 @@ if create_surfdata:
     lon=xr.DataArray(lon0,name='lon',dims='lsmlon',coords={'lsmlon':lon0})
     lat0=np.asarray(f1['LATIXY'][:,0])
     lat=xr.DataArray(lat0,name='lat',dims='lsmlat',coords={'lsmlat':lat0})
-    #f2=f1.assign({'lon':lon,'lat':lat})
-    f2=f1.assign()
-    f2['lon'] = lon
-    f2['lat'] = lat
+    f2=f1.assign({'lon':lon,'lat':lat})
+    #f2=f1.assign()
+    #f2['lon'] = lon
+    #f2['lat'] = lat
     # extract gridcell closest to plon/plat
     f3 = f2.sel(lsmlon=plon,lsmlat=plat,method='nearest')
     # expand dimensions
@@ -178,36 +178,34 @@ if create_surfdata:
  
     # modify surface data properties
     if overwrite_single_pft:
-        #f3.PCT_NAT_PFT[:,:,:] = 0
-        #f3['PCT_NAT_PFT'][:,:,:] = 0
+        atemp = f3.PCT_NAT_PFT.attrs
         f3['PCT_NAT_PFT'] = xr.where(f3['PCT_NAT_PFT']>0, 0, 0)
+        f3.PCT_NAT_PFT.attrs = atemp
         f3['PCT_NAT_PFT'][:,:,dominant_pft] = 100
         # for debugging - to check modification is working properly
-        mprint(f3)
+        #mprint(f3)
         #mprint(f3['PCT_NAT_PFT'][:,:,dominant_pft])
+        mprint(f3['PCT_NAT_PFT'])
+        del atemp
     if zero_nonveg_pfts:
-        #mprint(f3['PCT_NATVEG'])
-        #f3['PCT_NATVEG'][:,:]  = 100
-        #f3.loc['PCT_NATVEG',['lsmlat','lsmlon']]  = 100
-        #f3['PCT_NATVEG'] = 100
-        #f3['PCT_NATVEG'].loc[dict(lsmlon='lsmlon', lsmlat='lsmlat')] = 100
-        #f3['PCT_NATVEG'].loc[dict('lsmlon', 'lsmlat')] = 100
-        #f3['PCT_NATVEG']['lsmlon', 'lsmlat'] = 100
-        #f3['PCT_NATVEG'] = 100
-        mprint(f3['PCT_NATVEG'][:,:])
-        mprint(f3['PCT_NATVEG'])
-
-
-
-
-
-        f3['PCT_CROP'][:,:]    = 0
-        f3['PCT_LAKE'][:,:]    = 0.
-        f3['PCT_WETLAND'][:,:] = 0.
-        f3['PCT_URBAN'][:,:,]   = 0.
-        f3['PCT_GLACIER'][:,:] = 0.
+        #f3.PCT_NATVEG.values = np.array([[100]])
+        f3.PCT_NATVEG.data = np.array([[100]])
+        #f3['PCT_CROP'][:,:]    = 0
+        f3.PCT_CROP.data = np.array([[0]])
+        #f3['PCT_LAKE'][:,:]    = 0.
+        f3.PCT_LAKE.data = np.array([[0.]])
+        #f3['PCT_WETLAND'][:,:] = 0.
+        f3.PCT_WETLAND.data = np.array([[0.]])
+        #f3['PCT_URBAN'][:,:,]   = 0.
+        atemp = f3.PCT_URBAN.attrs
+        f3['PCT_URBAN'] = xr.where(f3['PCT_URBAN']>0, 0, 0)
+        f3.PCT_URBAN.attrs = atemp
+        #f3['PCT_GLACIER'][:,:] = 0.
+        f3.PCT_GLACIER.data = np.array([[0.]])
+        del atemp
     if uniform_snowpack:
-        f3['STD_ELEV'][:,:] = 20.
+        #f3['STD_ELEV'][:,:] = 20.
+        f3.STD_ELEV.data = np.array([[20.]])
     if no_saturation_excess:
         f3['FMAX'][:,:] = 0.
 
@@ -215,6 +213,7 @@ if create_surfdata:
     #f3 = f3.transpose(u'time', u'cft', u'natpft', u'lsmlat', u'lsmlon')
     f3 = f3.transpose('time', 'cft', 'lsmpft', 'natpft', 'nglcec', 'nglcecp1', 'nlevsoi', 'nlevurb', 'numrad', 'numurbl', 'lsmlat', 'lsmlon')
     # mode 'w' overwrites file
+    print('**** Write surfdata file to output directory')
     f3.to_netcdf(path=fsurf2, mode='w')
     mprint('created file '+fsurf2)
     f1.close(); f2.close(); f3.close()
