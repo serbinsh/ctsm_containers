@@ -11,6 +11,12 @@ import string
 import subprocess
 import numpy as np
 import xarray as xr
+import dask
+import toolz
+# import matplotlib for testing only - remove with final version of this code
+#from matplotlib import pyplot as plt
+import matplotlib.pyplot as plt
+import matplotlib as mpl
 
 def mprint(mstr):
     vnum=sys.version_info[0]
@@ -208,8 +214,7 @@ if create_surfdata:
         #f3['STD_ELEV'][:,:] = 20.
         f3.STD_ELEV.data = np.array([[20.]])
     if no_saturation_excess:
-        #f3['FMAX'][:,:] = 0.
-        f3.FMAX.data = np.array([[0.]])
+        f3['FMAX'][:,:] = 0.
 
     # specify dimension order 
     #f3 = f3.transpose(u'time', u'cft', u'natpft', u'lsmlat', u'lsmlon')
@@ -336,25 +341,28 @@ if create_datm:
          ftpqw2=dir_output_datm+tpqwtag+tag+'.'+dtag+'.nc'
 
          infile+=[fsolar,fprecip,ftpqw]
-         outfile+=[fsolar2,fprecip2,ftpqw2]
+         #outfile+=[fsolar2,fprecip2,ftpqw2]
+         # create monthly files for all variables
+         outfile+=[dtag+'.nc']
 
     nm=len(infile)
     for n in range(nm):
         mprint(outfile[n]+'\n')
-        file_in = infile[n]
+        #file_in = infile[n]
         file_out = outfile[n]
+        infiles = [s for s in infile if outfile[n] in s]
     
-    
-        f1  = xr.open_dataset(file_in)
+        #f1  = xr.open_dataset(file_in)
+        f1  = xr.open_mfdataset(infiles, combine='by_coords')
         # create 1d coordinate variables to enable sel() method
         lon0=np.asarray(f1['LONGXY'][0,:])
         lat0=np.asarray(f1['LATIXY'][:,0])
         lon=xr.DataArray(lon0,name='lon',dims='lon',coords={'lon':lon0})
         lat=xr.DataArray(lat0,name='lat',dims='lat',coords={'lat':lat0})
-        #f2=f1.assign({'lon':lon,'lat':lat})
-        f2=f1.assign()
-        f2['lon'] = lon
-        f2['lat'] = lat
+        f2=f1.assign({'lon':lon,'lat':lat})
+        #f2=f1.assign()
+        #f2['lon'] = lon
+        #f2['lat'] = lat
         f2.reset_coords(['LONGXY','LATIXY'])
         # extract gridcell closest to plon/plat
         f3  = f2.sel(lon=plon,lat=plat,method='nearest')
@@ -363,9 +371,14 @@ if create_datm:
         # specify dimension order 
         f3 = f3.transpose('scalar','time','lat','lon')
 
+        # debug plot
+        #plt.plot(f3.TBOT.data[2])
+        #plt.show() 
+
         # mode 'w' overwrites file
         print('**** Write drivers files to datmdata output directory')
-        f3.to_netcdf(path=file_out, mode='w')
+        output_driver_file = dir_output_datm+file_out
+        f3.to_netcdf(path=output_driver_file, mode='w')
         f1.close(); f2.close(); f3.close()
 
       

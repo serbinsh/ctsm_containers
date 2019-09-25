@@ -109,12 +109,14 @@ x=x2.communicate()
 timetag = x[0].strip()
 
 #--  Specify land domain file  ---------------------------------
+### need to sort out why domain.lnd.fv0.9x1.25_gx1v6.090309.nc isnt working. not creating correct xc/yc output
 fdomain  = '/Volumes/data/Model_Data/cesm_input_datasets/share/domains/domain.lnd.fv0.9x1.25_gx1v6.090309.nc'
 fdomain2 = dir_output + 'domain.lnd.fv0.9x1.25_gx1v6.'+tag+'.090309.nc'
+#fdomain  = '/Volumes/data/Model_Data/cesm_input_datasets/share/domains/domain.lnd.fv0.9x1.25_gx1v6.090309.nc'
 #fdomain2 = dir_output + 'domain.lnd.fv0.9x2.5_gx1v6.'+tag+'_090309.nc'
 
 #--  Specify surface data file  --------------------------------
-#fsurf    = '/Users/shawnserbin/Data/cesm_input_data/lnd/clm2/surfdata_map/surfdata_0.9x1.25_78pfts_CMIP6_simyr2000_c170824.nc'
+#fsurf    = '/Users/shawnserbin/Data/cesm_input_data/lnd/clm2/surfdata_map/surfdata_0.9x2.5_78pfts_CMIP6_simyr2000_c170824.nc'
 fsurf    = '/Volumes/data/Model_Data/cesm_input_datasets/lnd/clm2/surfdata_map/surfdata_0.9x1.25_78pfts_CMIP6_simyr2000_c170824.nc'
 #fsurf2   = dir_output + 'surfdata_0.9x1.25_16pfts_CMIP6_simyr2000_'+tag+'.c170706.nc'
 fsurf2   = dir_output + 'surfdata_0.9x1.25_78pfts_CMIP6_simyr2000_'+tag+'_c170824.nc'
@@ -132,17 +134,19 @@ fdatmdomain2  = dir_output_datm+'domain.lnd.360x720_gswp3.0v1.'+tag+'_c170606.nc
 if create_domain:
     f1  = xr.open_dataset(fdomain)
     # create 1d coordinate variables to enable sel() method
-    lon0=np.asarray(f1['xc'][0,:])
-    lat0=np.asarray(f1['yc'][:,0])
-    lon=xr.DataArray(lon0,name='lon',dims='ni',coords={'ni':lon0})
-    lat=xr.DataArray(lat0,name='lat',dims='nj',coords={'nj':lat0})
+    lon0 = np.asarray(f1['xc'][0,:])
+    lat0 = np.asarray(f1['yc'][:,0])
+    lon = xr.DataArray(lon0,name='lon',dims='ni',coords={'ni':lon0})
+    lat = xr.DataArray(lat0,name='lat',dims='nj',coords={'nj':lat0})
     # assign() not working on cheyenne
-    f2=f1.assign({'lon':lon,'lat':lat})
+    f2 = f1.assign({'lon':lon,'lat':lat})
+    #f2 = f1.assign_coords({'lon':lon,'lat':lat})
     #f2=f1.assign()
     #f2['lon'] = lon
     #f2['lat'] = lat
     #f2.reset_coords(['xc','yc'],inplace=True)
-    f2.reset_coords(['xc','yc'])
+    f2 = f2.reset_coords(['xc','yc'])
+
     # extract gridcell closest to plon/plat
     f3 = f2.sel(ni=plon,nj=plat,method='nearest')
     # expand dimensions
@@ -295,7 +299,8 @@ if create_datm:
     #2['lon'] = lon
     #f2['lat'] = lat
     #f2.reset_coords(['xc','yc'],inplace=True)
-    f2.reset_coords(['xc','yc'])
+    #f2.reset_coords(['xc','yc'])
+    f2 = f2.reset_coords(['xc','yc'])
     # extract gridcell closest to plon/plat
     f3 = f2.sel(ni=plon,nj=plat,method='nearest')
     # expand dimensions
@@ -343,7 +348,6 @@ if create_datm:
         mprint(outfile[n]+'\n')
         file_in = infile[n]
         file_out = outfile[n]
-    
     
         f1  = xr.open_dataset(file_in)
         # create 1d coordinate variables to enable sel() method
