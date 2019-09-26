@@ -2,10 +2,11 @@
 # on mac need to install libs as: python3 -m pip install xarray
 # helpful: https://towardsdatascience.com/handling-netcdf-files-using-xarray-for-absolute-beginners-111a8ab4463f
 # helpful: https://rabernat.github.io/research_computing_2018/xarray.html
+#
 #  Import libraries
 import sys
 import os
-from os.path import expanduser
+from os.path import expanduser,basename
 from getpass import getuser
 import string
 import subprocess
@@ -63,22 +64,30 @@ and land ice models turned off (i.e. the compset should use stub
 models SROF and SGLC)
 '''
 
-#  Set control flags
+# TODO
+# need to switch all path to os.path.join() because it can handle different OS platforms, e.g. Win vs Mac vs Linux
+# Make it easy for user-selectable domain/surf files
+
+#####  Set control flags
 
 #--  Specify point to extract
 plon = 270.0799
 plat = 45.805925
 
 #--  Create regional CLM domain file
-create_domain   = True
+create_domain   = False
 #--  Create CLM surface data file
-create_surfdata = True
+create_surfdata = False
 #--  Create CLM surface data file
 create_landuse  = False
 #--  Create single point DATM atmospheric forcing data
 create_datm     = True
+#-- What years to generate drivers for?
 datm_syr=1980
 datm_eyr=1981
+
+#-- what met driver?
+met_driver = 'atm_forcing.datm7.GSWP3.0.5d.v1.c170516'
 
 #--  Modify landunit structure
 overwrite_single_pft = True
@@ -88,15 +97,17 @@ uniform_snowpack     = False
 no_saturation_excess = False
 
 #--  Specify input and output directories
+cesm_input_datasets = '/Volumes/data/Model_Data/cesm_input_datasets/'
 dir_output = 'Data/cesm_input_data/single_point/'
+site_name = 'US-WCr'
 home = expanduser('~')
-dir_output = os.path.join(home,dir_output)
+# need to redo this part and not re-use dir_output
+dir_output = os.path.join(home,dir_output,site_name)
 os.makedirs(os.path.dirname(dir_output), exist_ok=True)
 
 # -- input datm
-#dir_input_datm='/Users/shawnserbin/Data/cesm_input_data/atm/datm7/atm_forcing.datm7.GSWP3.0.5d.v1.c170516/'
-dir_input_datm='/Volumes/data/Model_Data/cesm_input_datasets/atm/datm7/atm_forcing.datm7.GSWP3.0.5d.v1.c170516/'
-dir_output_datm=dir_output + 'datmdata/'
+dir_input_datm = os.path.join(cesm_input_datasets,'atm/datm7/',met_driver)
+dir_output_datm = os.path.join(dir_output,'datmdata/')
 os.makedirs(os.path.dirname(dir_output_datm), exist_ok=True)
 
 #--  Set input and output filenames
@@ -109,17 +120,17 @@ x=x2.communicate()
 timetag = x[0].strip()
 
 #--  Specify land domain file  ---------------------------------
-### need to sort out why domain.lnd.fv0.9x1.25_gx1v6.090309.nc isnt working. not creating correct xc/yc output
-fdomain  = '/Volumes/data/Model_Data/cesm_input_datasets/share/domains/domain.lnd.fv0.9x1.25_gx1v6.090309.nc'
-fdomain2 = dir_output + 'domain.lnd.fv0.9x1.25_gx1v6.'+tag+'.090309.nc'
+fdomain  = os.path.join(cesm_input_datasets,'share/domains/domain.lnd.fv0.9x1.25_gx1v6.090309.nc')
+fdomain2 = os.path.join(dir_output, os.path.splitext(basename(fdomain))[0]+'_'+site_name+'.nc')
 #fdomain  = '/Volumes/data/Model_Data/cesm_input_datasets/share/domains/domain.lnd.fv0.9x1.25_gx1v6.090309.nc'
 #fdomain2 = dir_output + 'domain.lnd.fv0.9x2.5_gx1v6.'+tag+'_090309.nc'
 
 #--  Specify surface data file  --------------------------------
 #fsurf    = '/Users/shawnserbin/Data/cesm_input_data/lnd/clm2/surfdata_map/surfdata_0.9x2.5_78pfts_CMIP6_simyr2000_c170824.nc'
-fsurf    = '/Volumes/data/Model_Data/cesm_input_datasets/lnd/clm2/surfdata_map/surfdata_0.9x1.25_78pfts_CMIP6_simyr2000_c170824.nc'
+fsurf = os.path.join(cesm_input_datasets,'lnd/clm2/surfdata_map/surfdata_0.9x1.25_78pfts_CMIP6_simyr2000_c170824.nc')
 #fsurf2   = dir_output + 'surfdata_0.9x1.25_16pfts_CMIP6_simyr2000_'+tag+'.c170706.nc'
-fsurf2   = dir_output + 'surfdata_0.9x1.25_78pfts_CMIP6_simyr2000_'+tag+'_c170824.nc'
+#fsurf2 = dir_output + '/surfdata_0.9x1.25_78pfts_CMIP6_simyr2000_'+tag+'_c170824.nc'
+fsurf2 = os.path.join(dir_output,os.path.splitext(basename(fsurf))[0]+'_'+site_name+'.nc')
 
 #--  Specify landuse file  -------------------------------------
 fluse    = '/glade/p/cesmdata/cseg/inputdata/lnd/clm2/surfdata_map/landuse.timeseries_1.9x2.5_hist_78pfts_CMIP6_simyr1850-2015_c170824.nc'
@@ -127,55 +138,45 @@ fluse2   = dir_output + 'landuse.timeseries_1.9x2.5_hist_78pfts_CMIP6_simyr1850-
 
 #--  Specify datm domain file  ---------------------------------
 #fdatmdomain = '/Users/shawnserbin/Data/cesm_input_data/atm/datm7/atm_forcing.datm7.GSWP3.0.5d.v1.c170516/domain.lnd.360x720_gswp3.0v1.c170606.nc'
-fdatmdomain = '/Volumes/data/Model_Data/cesm_input_datasets/atm/datm7/atm_forcing.datm7.GSWP3.0.5d.v1.c170516/domain.lnd.360x720_gswp3.0v1.c170606.nc'
-fdatmdomain2  = dir_output_datm+'domain.lnd.360x720_gswp3.0v1.'+tag+'_c170606.nc'
+fdatmdomain = os.path.join(dir_input_datm,'domain.lnd.360x720_gswp3.0v1.c170606.nc')
+#fdatmdomain2  = dir_output_datm + '/domain.lnd.360x720_gswp3.0v1.'+tag+'_c170606.nc'
+#fdatmdomain2  = os.path.join(dir_output, os.path.splitext(basename(fdatmdomain))[0]+'_'+site_name+'.nc')
+fdatmdomain2  = os.path.join(dir_output_datm, basename(fdatmdomain))
+
 
 #--  Create CTSM domain file
 if create_domain:
     f1  = xr.open_dataset(fdomain)
-    # create 1d coordinate variables to enable sel() method
     lon0 = np.asarray(f1['xc'][0,:])
     lat0 = np.asarray(f1['yc'][:,0])
     lon = xr.DataArray(lon0,name='lon',dims='ni',coords={'ni':lon0})
     lat = xr.DataArray(lat0,name='lat',dims='nj',coords={'nj':lat0})
-    # assign() not working on cheyenne
     f2 = f1.assign({'lon':lon,'lat':lat})
-    #f2 = f1.assign_coords({'lon':lon,'lat':lat})
-    #f2=f1.assign()
-    #f2['lon'] = lon
-    #f2['lat'] = lat
-    #f2.reset_coords(['xc','yc'],inplace=True)
     f2 = f2.reset_coords(['xc','yc'])
 
     # extract gridcell closest to plon/plat
     f3 = f2.sel(ni=plon,nj=plat,method='nearest')
+
     # expand dimensions
     f3 = f3.expand_dims(['nj','ni'])
 
-    wfile=fdomain2
-
-    # for debugging
-    #mprint(f3)
-    
     # mode 'w' overwrites file
     print('**** Write domain file to output directory')
-    f3.to_netcdf(path=wfile, mode='w')
+    f3.to_netcdf(path=fdomain2, mode='w')
     mprint('created file '+fdomain2)
     f1.close(); f2.close(); f3.close()
 
 #--  Create CTSM surface data file
 if create_surfdata:
-    f1  = xr.open_dataset(fsurf, cache=True)
-    #f1  = xr.load_dataset(fsurf)
+    #f1  = xr.open_dataset(fsurf, cache=True)
+    mprint('**** Open '+fsurf)
+    f1  = xr.load_dataset(fsurf)
     # create 1d variables
     lon0=np.asarray(f1['LONGXY'][0,:])
     lon=xr.DataArray(lon0,name='lon',dims='lsmlon',coords={'lsmlon':lon0})
     lat0=np.asarray(f1['LATIXY'][:,0])
     lat=xr.DataArray(lat0,name='lat',dims='lsmlat',coords={'lsmlat':lat0})
     f2=f1.assign({'lon':lon,'lat':lat})
-    #f2=f1.assign()
-    #f2['lon'] = lon
-    #f2['lat'] = lat
     # extract gridcell closest to plon/plat
     f3 = f2.sel(lsmlon=plon,lsmlat=plat,method='nearest')
     # expand dimensions
@@ -256,10 +257,10 @@ if create_landuse:
     lon=xr.DataArray(lon0,name='lon',dims='lsmlon',coords={'lsmlon':lon0})
     lat0=np.asarray(f1['LATIXY'][:,0])
     lat=xr.DataArray(lat0,name='lat',dims='lsmlat',coords={'lsmlat':lat0})
-    #f2=f1.assign({'lon':lon,'lat':lat})
-    f2=f1.assign()
-    f2['lon'] = lon
-    f2['lat'] = lat
+    f2=f1.assign({'lon':lon,'lat':lat})
+    #f2=f1.assign()
+    #f2['lon'] = lon
+    #f2['lat'] = lat
     # extract gridcell closest to plon/plat
     f3 = f2.sel(lsmlon=plon,lsmlat=plat,method='nearest')
 
@@ -295,28 +296,24 @@ if create_datm:
     lat=xr.DataArray(lat0,name='lat',dims='nj',coords={'nj':lat0})
 
     f2=f1.assign({'lon':lon,'lat':lat})
-    #f2=f1.assign()
-    #2['lon'] = lon
-    #f2['lat'] = lat
-    #f2.reset_coords(['xc','yc'],inplace=True)
-    #f2.reset_coords(['xc','yc'])
     f2 = f2.reset_coords(['xc','yc'])
+
     # extract gridcell closest to plon/plat
     f3 = f2.sel(ni=plon,nj=plat,method='nearest')
     # expand dimensions
     f3 = f3.expand_dims(['nj','ni'])
 
-    wfile=fdatmdomain2
     # mode 'w' overwrites file
     print('**** Write domain.lnd file to output directory')
-    f3.to_netcdf(path=wfile, mode='w')
+    f3.to_netcdf(path=fdatmdomain2, mode='w')
     mprint('created file '+fdatmdomain2)
     f1.close(); f2.close(); f3.close()
 
     #--  specify subdirectory names and filename prefixes
-    solrdir = 'Solar/'
-    precdir = 'Precip/'
-    tpqwldir = 'TPHWL/'
+    solrdir = 'Solar'
+    precdir = 'Precip'
+    tpqwldir = 'TPHWL'
+    # !!! these should be found automatically. Replace this with a command to find the common filenames !!!
     prectag = 'clmforc.GSWP3.c2011.0.5x0.5.Prec.'
     solrtag = 'clmforc.GSWP3.c2011.0.5x0.5.Solr.'
     tpqwtag = 'clmforc.GSWP3.c2011.0.5x0.5.TPQWL.'
@@ -333,12 +330,22 @@ if create_datm:
 
          dtag=ystr+'-'+mstr
 
-         fsolar=dir_input_datm+solrdir+solrtag+dtag+'.nc'
-         fsolar2=dir_output_datm+solrtag+tag+'.'+dtag+'.nc'
-         fprecip=dir_input_datm+precdir+prectag+dtag+'.nc'
-         fprecip2=dir_output_datm+prectag+tag+'.'+dtag+'.nc'
-         ftpqw=dir_input_datm+tpqwldir+tpqwtag+dtag+'.nc'
-         ftpqw2=dir_output_datm+tpqwtag+tag+'.'+dtag+'.nc'
+         # setup inputs and create outputs - removed insertion of lat/long into filename to make it easier to use with CLM 
+         #fsolar=dir_input_datm+solrdir+solrtag+dtag+'.nc'
+         fsolar = os.path.join(dir_input_datm, solrdir, solrtag+dtag+'.nc')
+         #fsolar2=dir_output_datm+solrtag+tag+'.'+dtag+'.nc'
+         fsolar2 = os.path.join(dir_output_datm,solrdir,solrtag+dtag+'.nc')
+         os.makedirs(os.path.dirname(fsolar2), exist_ok=True)
+         #fprecip=dir_input_datm+precdir+prectag+dtag+'.nc'
+         fprecip = os.path.join(dir_input_datm, precdir, prectag+dtag+'.nc')
+         #fprecip2=dir_output_datm+prectag+tag+'.'+dtag+'.nc'
+         fprecip2 = os.path.join(dir_output_datm,precdir,prectag+dtag+'.nc')
+         os.makedirs(os.path.dirname(fprecip2), exist_ok=True)
+         #ftpqw=dir_input_datm+tpqwldir+tpqwtag+dtag+'.nc'
+         ftpqw = os.path.join(dir_input_datm, tpqwldir, tpqwtag+dtag+'.nc')
+         #ftpqw2=dir_output_datm+tpqwtag+tag+'.'+dtag+'.nc'
+         ftpqw2 = os.path.join(dir_output_datm,tpqwldir,tpqwtag+dtag+'.nc')
+         os.makedirs(os.path.dirname(ftpqw2), exist_ok=True)
 
          infile+=[fsolar,fprecip,ftpqw]
          outfile+=[fsolar2,fprecip2,ftpqw2]
@@ -374,4 +381,3 @@ if create_datm:
 
       
     mprint('datm files written to: '+dir_output_datm)
-
