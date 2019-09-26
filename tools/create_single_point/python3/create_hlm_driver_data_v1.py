@@ -71,27 +71,28 @@ models SROF and SGLC)
 #####  Set control flags
 
 #--  Specify point to extract
-plon = 270.0799
-plat = 45.805925
+plon = 270.6523
+plat = 46.2420
 
 #--  Create regional CLM domain file
-create_domain   = False
+create_domain   = True
 #--  Create CLM surface data file
-create_surfdata = False
-#--  Create CLM surface data file
+create_surfdata = True
+#--  Create CLM surface data file - doesnt work yet
 create_landuse  = False
 #--  Create single point DATM atmospheric forcing data
 create_datm     = True
 #-- What years to generate drivers for?
 datm_syr=1980
-datm_eyr=1981
+datm_eyr=2010
+#datm_eyr=1981
 
 #-- what met driver?
 met_driver = 'atm_forcing.datm7.GSWP3.0.5d.v1.c170516'
 
 #--  Modify landunit structure
 overwrite_single_pft = True
-dominant_pft         = 7 #BDF
+dominant_pft         = 1 #1 NE Temp Tree 7 BDF
 zero_nonveg_pfts     = True
 uniform_snowpack     = False
 no_saturation_excess = False
@@ -99,7 +100,7 @@ no_saturation_excess = False
 #--  Specify input and output directories
 cesm_input_datasets = '/Volumes/data/Model_Data/cesm_input_datasets/'
 dir_output = 'Data/cesm_input_data/single_point/'
-site_name = 'US-WCr'
+site_name = 'US-Syv'
 home = expanduser('~')
 # need to redo this part and not re-use dir_output
 dir_output = os.path.join(home,dir_output,site_name)
@@ -107,8 +108,8 @@ os.makedirs(os.path.dirname(dir_output), exist_ok=True)
 
 # -- input datm
 dir_input_datm = os.path.join(cesm_input_datasets,'atm/datm7/',met_driver)
-dir_output_datm = os.path.join(dir_output,'datmdata/')
-os.makedirs(os.path.dirname(dir_output_datm), exist_ok=True)
+dir_output_datm = os.path.join(dir_output,'datmdata',met_driver)
+os.makedirs(dir_output_datm, exist_ok=True)
 
 #--  Set input and output filenames
 tag=str(plon)+'_'+str(plat)
