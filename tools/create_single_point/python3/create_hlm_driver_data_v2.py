@@ -1,8 +1,14 @@
 #! /usr/bin/env python3.7
-# on mac need to install libs as: python3 -m pip install xarray
+####### on mac need to install libs as: python3 -m pip install xarray
 # helpful: https://towardsdatascience.com/handling-netcdf-files-using-xarray-for-absolute-beginners-111a8ab4463f
 # helpful: https://rabernat.github.io/research_computing_2018/xarray.html
 #
+#
+# Authors: Shawn P. Serbin
+# Adapted from original source provided by Andy Fox
+#
+######
+
 #  Import libraries
 import sys
 import os
@@ -10,6 +16,7 @@ from os.path import expanduser,basename
 from getpass import getuser
 import string
 import subprocess
+import configparser
 import numpy as np
 import xarray as xr
 
@@ -26,6 +33,7 @@ mprint(myname)
 mprint(pwd)
 
 '''
+TODO UPDATE THE INSTRUCTIONS BELOW
 #------------------------------------------------------------------#
 #---------------------  Instructions  -----------------------------#
 #------------------------------------------------------------------#
@@ -68,42 +76,46 @@ models SROF and SGLC)
 # need to switch all path to os.path.join() because it can handle different OS platforms, e.g. Win vs Mac vs Linux
 # Make it easy for user-selectable domain/surf files
 
-#####  Set control flags
+#####  Set script controls here
+config = configparser.ConfigParser()
+config.read("config.cfg")
+
+#-- Specify site name
+site_name = config.get("sitevars", "site_name")
 
 #--  Specify point to extract
-plon = 287.8285
-plat = 42.5378
+plon = float(config.get("sitevars", "plon"))
+plat = float(config.get("sitevars", "plat"))
 
 #--  Create regional CLM domain file
-create_domain   = True
+create_domain   = eval(config.get("surfacevars", "create_domain"))
 #--  Create CLM surface data file
-create_surfdata = True
-#--  Create CLM surface data file - doesnt work yet
-create_landuse  = False
+create_surfdata = eval(config.get("surfacevars", "create_surfdata"))
+#--  Create CLM land-use data file - doesnt work yet
+create_landuse  = eval(config.get("surfacevars", "create_landuse"))
 #--  Create single point DATM atmospheric forcing data
-create_datm     = True
-#-- What years to generate drivers for?
-datm_syr=1980
-datm_eyr=2010
-#datm_eyr=1981
+create_datm     = eval(config.get("surfacevars", "create_datm"))
 
 #-- what met driver?
-met_driver = 'atm_forcing.datm7.GSWP3.0.5d.v1.c170516'
+met_driver = config.get("drivervars", "met_driver")
+
+#-- What years to generate drivers for?
+datm_syr = int(config.get("drivervars", "datm_syr"))
+datm_eyr = int(config.get("drivervars", "datm_eyr"))
 
 #--  Modify landunit structure
-overwrite_single_pft = True
-dominant_pft         = 7 #1 NE Temp Tree 7 BDF
-zero_nonveg_pfts     = True
-uniform_snowpack     = False
-no_saturation_excess = False
+overwrite_single_pft = eval(config.get("landvars", "overwrite_single_pft"))
+dominant_pft         = int(config.get("landvars", "dominant_pft"))
+zero_nonveg_pfts     = eval(config.get("landvars", "zero_nonveg_pfts"))
+uniform_snowpack     = eval(config.get("landvars", "uniform_snowpack"))
+no_saturation_excess = eval(config.get("landvars", "no_saturation_excess"))
 
 #--  Specify input and output directories
-cesm_input_datasets = '/Volumes/data/Model_Data/cesm_input_datasets/'
-dir_output = 'Data/cesm_input_data/single_point/'
-site_name = 'US-Ha1'
-home = expanduser('~')
+cesm_input_datasets = config.get("drivervars", "cesm_input_datasets")
+dir_output = config.get("outputvars", "dir_output")
+
 # need to redo this part and not re-use dir_output
-dir_output = os.path.join(home,dir_output,site_name)
+dir_output = os.path.join(dir_output,site_name)
 os.makedirs(os.path.dirname(dir_output), exist_ok=True)
 
 # -- input datm
@@ -121,29 +133,20 @@ x=x2.communicate()
 timetag = x[0].strip()
 
 #--  Specify land domain file  ---------------------------------
-fdomain  = os.path.join(cesm_input_datasets,'share/domains/domain.lnd.fv0.9x1.25_gx1v6.090309.nc')
+fdomain  = os.path.join(cesm_input_datasets,'share/domains/',config.get("surfacevars", "fdomain"))
 fdomain2 = os.path.join(dir_output, os.path.splitext(basename(fdomain))[0]+'_'+site_name+'.nc')
-#fdomain  = '/Volumes/data/Model_Data/cesm_input_datasets/share/domains/domain.lnd.fv0.9x1.25_gx1v6.090309.nc'
-#fdomain2 = dir_output + 'domain.lnd.fv0.9x2.5_gx1v6.'+tag+'_090309.nc'
 
 #--  Specify surface data file  --------------------------------
-#fsurf    = '/Users/shawnserbin/Data/cesm_input_data/lnd/clm2/surfdata_map/surfdata_0.9x2.5_78pfts_CMIP6_simyr2000_c170824.nc'
-fsurf = os.path.join(cesm_input_datasets,'lnd/clm2/surfdata_map/surfdata_0.9x1.25_78pfts_CMIP6_simyr2000_c170824.nc')
-#fsurf2   = dir_output + 'surfdata_0.9x1.25_16pfts_CMIP6_simyr2000_'+tag+'.c170706.nc'
-#fsurf2 = dir_output + '/surfdata_0.9x1.25_78pfts_CMIP6_simyr2000_'+tag+'_c170824.nc'
+fsurf = os.path.join(cesm_input_datasets,'lnd/clm2/surfdata_map/',config.get("surfacevars", "fsurf"))
 fsurf2 = os.path.join(dir_output,os.path.splitext(basename(fsurf))[0]+'_'+site_name+'.nc')
 
-#--  Specify landuse file  -------------------------------------
-fluse    = '/glade/p/cesmdata/cseg/inputdata/lnd/clm2/surfdata_map/landuse.timeseries_1.9x2.5_hist_78pfts_CMIP6_simyr1850-2015_c170824.nc'
-fluse2   = dir_output + 'landuse.timeseries_1.9x2.5_hist_78pfts_CMIP6_simyr1850-2015_'+tag+'.c170824.nc'
+#--  Specify landuse file  -------------------------------------  NEEDS UPDATING!!
+fluse    = os.path.join(cesm_input_datasets,'lnd/clm2/surfdata_map/',config.get("surfacevars", "lufile"))
+fluse2   = os.path.join(dir_output,os.path.splitext(basename(fluse))[0]+'_'+site_name+'.nc')
 
 #--  Specify datm domain file  ---------------------------------
-#fdatmdomain = '/Users/shawnserbin/Data/cesm_input_data/atm/datm7/atm_forcing.datm7.GSWP3.0.5d.v1.c170516/domain.lnd.360x720_gswp3.0v1.c170606.nc'
-fdatmdomain = os.path.join(dir_input_datm,'domain.lnd.360x720_gswp3.0v1.c170606.nc')
-#fdatmdomain2  = dir_output_datm + '/domain.lnd.360x720_gswp3.0v1.'+tag+'_c170606.nc'
-#fdatmdomain2  = os.path.join(dir_output, os.path.splitext(basename(fdatmdomain))[0]+'_'+site_name+'.nc')
+fdatmdomain = os.path.join(dir_input_datm,config.get("surfacevars", "fdatmdomain"))
 fdatmdomain2  = os.path.join(dir_output_datm, basename(fdatmdomain))
-
 
 #--  Create CTSM domain file
 if create_domain:
@@ -169,7 +172,6 @@ if create_domain:
 
 #--  Create CTSM surface data file
 if create_surfdata:
-    #f1  = xr.open_dataset(fsurf, cache=True)
     mprint('**** Open '+fsurf)
     f1  = xr.load_dataset(fsurf)
     # create 1d variables
@@ -189,32 +191,20 @@ if create_surfdata:
         f3['PCT_NAT_PFT'] = xr.where(f3['PCT_NAT_PFT']>0, 0, 0)
         f3.PCT_NAT_PFT.attrs = atemp
         f3['PCT_NAT_PFT'][:,:,dominant_pft] = 100
-        # for debugging - to check modification is working properly
-        #mprint(f3)
-        #mprint(f3['PCT_NAT_PFT'][:,:,dominant_pft])
-        mprint(f3['PCT_NAT_PFT'])
         del atemp
     if zero_nonveg_pfts:
-        #f3.PCT_NATVEG.values = np.array([[100]])
         f3.PCT_NATVEG.data = np.array([[100]])
-        #f3['PCT_CROP'][:,:]    = 0
         f3.PCT_CROP.data = np.array([[0]])
-        #f3['PCT_LAKE'][:,:]    = 0.
         f3.PCT_LAKE.data = np.array([[0.]])
-        #f3['PCT_WETLAND'][:,:] = 0.
         f3.PCT_WETLAND.data = np.array([[0.]])
-        #f3['PCT_URBAN'][:,:,]   = 0.
         atemp = f3.PCT_URBAN.attrs
         f3['PCT_URBAN'] = xr.where(f3['PCT_URBAN']>0, 0, 0)
         f3.PCT_URBAN.attrs = atemp
-        #f3['PCT_GLACIER'][:,:] = 0.
         f3.PCT_GLACIER.data = np.array([[0.]])
         del atemp
     if uniform_snowpack:
-        #f3['STD_ELEV'][:,:] = 20.
         f3.STD_ELEV.data = np.array([[20.]])
     if no_saturation_excess:
-        #f3['FMAX'][:,:] = 0.
         f3.FMAX.data = np.array([[0.]])
 
     # specify dimension order 
@@ -288,6 +278,7 @@ if create_landuse:
 
 #--  Create single point atmospheric forcing data
 if create_datm:
+    mprint('**** Open '+fdatmdomain)
     #--  create datm domain file
     f1  = xr.open_dataset(fdatmdomain)
     # create 1d coordinate variables to enable sel() method
