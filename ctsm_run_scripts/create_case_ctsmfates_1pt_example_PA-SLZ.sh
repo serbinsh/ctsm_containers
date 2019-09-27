@@ -97,9 +97,9 @@ echo ${PWD}
 echo "*** Copy FATES parameter file ***"
 echo " "
 cp ${FATES_PARAM_FILE_PATH}/${FATES_PARAM_FILE} .
-echo "*** Copy CLM parameter file ***"
-echo " "
-cp ${CLM_PARAM_FILE_PATH}/${CLM_PARAM_FILE} .
+#echo "*** Copy CLM parameter file ***"
+#echo " "
+#cp ${CLM_PARAM_FILE_PATH}/${CLM_PARAM_FILE} .
 # =======================================================================================
 
 
