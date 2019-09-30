@@ -16,10 +16,6 @@ case $i in
     site_name="${i#*=}"
     shift # past argument=value
     ;;
-    -dd=*|--datm_data=*)
-    datm_data="${i#*=}"
-    shift # past argument=value
-    ;;
     -sy=*|--start_year=*)
     start_year="${i#*=}"
     shift # past argument=value
@@ -48,17 +44,18 @@ done
 # check for missing inputs and set defaults
 case_root="${case_root:-/ctsm_output}"
 site_name="${site_name:-CLM5_site_run}"
-datm_data="${datm_data:-/data}"
-start_year="${start_year:-'2008-01-01'}"
+#datm_data="${datm_data:-/data}"  # maybe later we make this a user-defined option, but for now hard-code
+start_year="${start_year:-'2004-01-01'}"
 num_years="${num_years:-2}"
 rtype="${rtype:-startup}"
-met_start="${met_start:-2008}"
-met_end="${met_end:-2016}"
+met_start="${met_start:-2000}"
+met_end="${met_end:-2008}"
 
 # show options
+datm_data_root=/data/single_point/${site_name}
 echo "CASEROOT location = ${case_root}"
 echo "Site Name = ${site_name}"
-echo "DATM data source = ${datm_data}"
+echo "DATM data source = ${datm_data_root}"
 echo "Model simulation start year  = ${start_year}"
 echo "Number of simulation years  = ${num_years}"
 echo "Run type = ${rtype}"
@@ -83,7 +80,7 @@ export CLM5_PARAM_FILE_PATH=/ctsm_parameter_files
 export CLM5_PARAM_FILE=clm5_params.c171117.nc
 
 # Define forcing and surfice file data for run:
-export datmdata_dir=${datm_data}/datmdata/atm_forcing.datm7.GSWP3.0.5d.v1.c170516
+export datmdata_dir=${datm_data_root}/datmdata/atm_forcing.datm7.GSWP3.0.5d.v1.c170516
 echo "DATM forcing data directory:"
 echo ${datmdata_dir}
 
@@ -91,19 +88,19 @@ pattern=${datmdata_dir}/"domain.lnd.360x720_*"
 datm_domain_lnd=( $pattern )
 echo "DATM land domain file:"
 echo "${datm_domain_lnd[0]}"
-export CLM5_DATM_DOMAIN_LND=datm_domain_lnd
+export CLM5_DATM_DOMAIN_LND=${datm_domain_lnd[0]}
 
-pattern=${datm_data}/"domain.lnd*"
+pattern=${datm_data_root}/"domain.lnd*"
 domain_lnd=( $pattern )
 echo "Land domain file:"
 echo "${domain_lnd[0]}"
-export CLM5_USRDAT_DOMAIN=domain_lnd
+export CLM5_USRDAT_DOMAIN=${domain_lnd[0]}
 
-pattern=${datm_data}/"surfdata_*"
+pattern=${datm_data_root}/"surfdata_*"
 surfdata=( $pattern )
 echo "Surface file:"
 echo "${surfdata[0]}"
-export CLM5_SURFDAT=surfdata
+export CLM5_SURFDAT=${surfdata[0]}
 
 # setup case
 rm -rf ${CASE_NAME}
@@ -123,6 +120,7 @@ echo ${PWD}
 
 # Copy parameter file to case
 echo "*** Copy CLM5 parameter file ***"
+echo ${CLM5_PARAM_FILE_PATH}/${CLM5_PARAM_FILE}
 echo " "
 cp ${CLM5_PARAM_FILE_PATH}/${CLM5_PARAM_FILE} .
 # =======================================================================================
@@ -152,8 +150,8 @@ echo "*** Modifying xmls  ***"
 ./xmlchange -a CLM_CONFIG_OPTS='-nofire'
 ./xmlchange ATM_DOMAIN_FILE=${CLM5_USRDAT_DOMAIN}
 ./xmlchange LND_DOMAIN_FILE=${CLM5_USRDAT_DOMAIN}
-./xmlchange ATM_DOMAIN_PATH=${datm_data}/${site_name}
-./xmlchange LND_DOMAIN_PATH=${datm_data}/${site_name}
+./xmlchange ATM_DOMAIN_PATH=${datm_data_root}
+./xmlchange LND_DOMAIN_PATH=${datm_data_root}
 ./xmlchange CLM_USRDAT_NAME=${site_name}
 ./xmlchange MOSART_MODE=NULL
 
@@ -161,5 +159,70 @@ echo "*** Modifying xmls  ***"
 ./xmlchange --id DATM_CLMNCEP_YR_START --val ${met_start}
 ./xmlchange --id DATM_CLMNCEP_YR_END --val ${met_end}
 
+# location of forcing and surface files. This is relative to within the container after mapping the external data dir to /data
+./xmlchange DIN_LOC_ROOT_CLMFORC=${datm_data_root}/datmdata
+./xmlchange DIN_LOC_ROOT=/data
 
+# turn off debug
+./xmlchange DEBUG=FALSE
+./xmlchange INFO_DBUG=0
+
+# Optimize PE layout for run
+./xmlchange NTASKS_ATM=1,ROOTPE_ATM=0
+./xmlchange NTASKS_CPL=1,ROOTPE_CPL=0
+./xmlchange NTASKS_LND=1,ROOTPE_LND=0
+./xmlchange NTASKS_OCN=1,ROOTPE_OCN=0
+./xmlchange NTASKS_ICE=1,ROOTPE_ICE=0
+./xmlchange NTASKS_GLC=1,ROOTPE_GLC=0
+./xmlchange NTASKS_ROF=1,ROOTPE_ROF=0
+./xmlchange NTASKS_WAV=1,ROOTPE_WAV=0
+./xmlchange NTASKS_ESP=1,ROOTPE_ESP=0
+
+# Set run location to case dir
+./xmlchange --file env_build.xml --id CIME_OUTPUT_ROOT --val ${CASE_NAME}
+# =======================================================================================
+
+# =======================================================================================
+echo "*** Update user_nl_clm ***"
+echo " "
+# update user_nl_clm
+cat >> user_nl_clm <<EOF
+fsurdat = '${CLM5_SURFDAT}'
+hist_empty_htapes = .true.
+hist_fincl1 = 'NEP','NPP','GPP','NEE','TOTECOSYSC','TOTVEGC','TLAI','ELAI','TSOI_10CM','QVEGT','EFLX_LH_TOT_R','AR',\
+'HR','WIND','ZBOT','FSDS','RH','TBOT','PBOT','QBOT','RAIN','FLDS'
+hist_mfilt             = 8760
+hist_nhtfrq            = -1
+EOF
+
+echo "*** Point to CLM5 param file in case directory ***"
+echo "${CASE_NAME}/${CLM5_PARAM_FILE}"
+echo " "
+cat >> user_nl_clm <<EOF
+paramfile = "${CASE_NAME}/${CLM5_PARAM_FILE}"
+EOF
+
+## define met params
+echo "*** Update met forcing options ***"
+echo " "
+cat >> user_nl_datm <<EOF
+mapalgo = 'nn', 'nn', 'nn'
+taxmode = "cycle", "cycle", "cycle"
+EOF
+
+#./cesm_setup
+echo "*** Running case.setup ***"
+echo " "
+./case.setup
+
+echo "*** Run preview_namelists ***"
+echo " "
+./preview_namelists
+
+echo "*** Build case ***"
+echo " "
+./case.build
+
+echo "*** Finished building new case in CASE: ${CASE_NAME}"
+# =============================================================================
 #### EOF

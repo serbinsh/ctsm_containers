@@ -46,9 +46,7 @@ RUN cd / \
     && mkdir -p ctsm_run_scripts \
     && cd ctsm_run_scripts \
     && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/ctsm_run_scripts/create_case_1pt_example_USNR1.sh \
-    && wget \
-    && chmod 775 create_case_1pt_example_USNR1.sh \
-    && chmod 775 
+    && chmod 775 create_case_1pt_example_USNR1.sh
 
     ## Create US-NR1 example data directory
 RUN cd / \
