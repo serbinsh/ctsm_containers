@@ -20,10 +20,12 @@ RUN ln -s /usr/bin/make /usr/bin/gmake
     ## create data mount point in container - could change this to /mnt or something more generic in machines files
 RUN cd / \
     && mkdir -p data \
+    && mkdir -p ctsm_example_data \
     && mkdir -p ctsm_output \
     && mkdir -p scripts \
     && mkdir -p tools \
     && chown clmuser /data \
+    && chown clmuser /ctsm_example_data \
     && chown clmuser /ctsm_output \
     && chown clmuser /scripts \
     && chown clmuser tools
@@ -54,13 +56,34 @@ RUN cd / \
 
     ## Create US-NR1 example data directory
 RUN cd / \
-    && mkdir -p ctsm_example_data \
-    && chown clmuser /ctsm_example_data \
     && cd ctsm_example_data \
     && wget https://github.com/serbinsh/ctsm_containers/raw/master/ctsm_example_data/USNR1/USNR1_CTSM_Example_Data.tar.gz \
     && tar -zxvf USNR1_CTSM_Example_Data.tar.gz \
     && rm USNR1_CTSM_Example_Data.tar.gz
 
+    ## Create tools directory for helper functions
+RUN cd / \
+    && cd tools \
+    && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/tools/create_single_point/python3/config.cfg \
+    && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/tools/create_single_point/python3/create_hlm_driver_data_v2.py \
+    && chmod 775 config.cfg \
+    && chmod 775 create_hlm_driver_data_v2.py
+
+    ## Add python3.6 and modules needed for tools - this should really go into the gcc container
+RUN cd / \
+    && wget https://www.python.org/ftp/python/3.6.9/Python-3.6.9.tgz \
+    && tar xvf Python-3.6.9.tgz \
+    && cd Python-3.6.9 \
+    && ./configure --enable-optimizations \
+    && make -j4 \
+    && make altinstall \
+    && cd / \
+    && python3.6 --version \
+    && python3.6 -m pip install --upgrade pip \
+    && python3.6 -m pip install configparser numpy scipy cftime netCDF4 xarray \
+    && cd / \
+    && rm -r Python-3.6.9 \
+    && rm Python-3.6.9.tgz
 
     ## setup clmuser to use with docker
 RUN export USER=clmuser
