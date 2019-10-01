@@ -21,10 +21,12 @@ RUN ln -s /usr/bin/make /usr/bin/gmake
 RUN cd / \
     && mkdir -p data \
     && mkdir -p ctsm_output \
-    && mkdir -p scripts 
-RUN chown clmuser /data
-RUN chown clmuser /ctsm_output
-RUN chown clmuser /scripts
+    && mkdir -p scripts \
+    && mkdir -p tools \
+    && chown clmuser /data \
+    && chown clmuser /ctsm_output \
+    && chown clmuser /scripts \
+    && chown clmuser tools
 
     ## Checkout CTSM model
 RUN echo "*** Checkout CTSM model"
@@ -46,7 +48,9 @@ RUN cd / \
     && mkdir -p ctsm_run_scripts \
     && cd ctsm_run_scripts \
     && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/ctsm_run_scripts/create_case_1pt_example_USNR1.sh \
-    && chmod 775 create_case_1pt_example_USNR1.sh
+    && wget https://raw.githubusercontent.com/serbinsh/ctsm_containers/master/ctsm_run_scripts/create_case_ctsm_1pt_custom_site.sh \
+    && chmod 775 create_case_1pt_example_USNR1.sh \
+    && chmod 775 create_case_ctsm_1pt_custom_site.sh
 
     ## Create US-NR1 example data directory
 RUN cd / \
