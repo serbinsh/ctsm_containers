@@ -11,7 +11,7 @@
 
 #  Import libraries
 import sys
-import os
+import os,argparse
 from os.path import expanduser,basename
 from getpass import getuser
 import string
@@ -77,8 +77,15 @@ models SROF and SGLC)
 # Make it easy for user-selectable domain/surf files
 
 #####  Set script controls here
+#-- setup config file here
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--config', dest="config", metavar='config', type=str, nargs=1, help='path to configuration file to use')
+args = parser.parse_args()
+mprint(args.config)
 config = configparser.ConfigParser()
-config.read("config.cfg")
+#config.read("config.cfg")
+config_file = ParseRunOptions(args.config[0])
+config.read(config_file)
 
 #-- Specify site name
 site_name = config.get("sitevars", "site_name")
@@ -150,6 +157,7 @@ fdatmdomain2  = os.path.join(dir_output_datm, basename(fdatmdomain))
 
 #--  Create CTSM domain file
 if create_domain:
+    mprint('**** Open '+fdomain)
     f1  = xr.open_dataset(fdomain)
     lon0 = np.asarray(f1['xc'][0,:])
     lat0 = np.asarray(f1['yc'][:,0])
