@@ -26,11 +26,6 @@ def mprint(mstr):
         print(mstr)
     if vnum == 2:
         print(mstr)
-        
-myname=getuser()
-pwd=os.getcwd()
-mprint(myname)
-mprint(pwd)
 
 '''
 TODO UPDATE THE INSTRUCTIONS BELOW
@@ -78,17 +73,21 @@ models SROF and SGLC)
 
 #####  Set script controls here
 #-- setup config file here
-parser = argparse.ArgumentParser(description=__doc__)
-parser.add_argument('--config', dest="config", metavar='config', type=str, nargs=1, help='path to configuration file to use')
+parser = argparse.ArgumentParser()
+parser.add_argument('--config', help='path to configuration file to use', 
+    required=True)
 args = parser.parse_args()
-mprint(args.config)
+print(f'Config file: {args.config}')
 config = configparser.ConfigParser()
 #config.read("config.cfg")
-config_file = ParseRunOptions(args.config[0])
+config_file = args.config
 config.read(config_file)
+print(" ")
 
 #-- Specify site name
 site_name = config.get("sitevars", "site_name")
+mprint("Site name: "+site_name)
+mprint(" ")
 
 #--  Specify point to extract
 plon = float(config.get("sitevars", "plon"))
