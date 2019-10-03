@@ -12,14 +12,17 @@ ARG OPENMPI_VERSION=2.1.5
 ARG HDF5_VERSION=1.10.4
 ARG NETCDF_VERSION=4.6.2
 ARG NETCDF_FORTRAN_VERSION=4.4.4
+ARG PYTHON3_VERSION=3.6.9
 
 # echo back options
-RUN echo $NCPUS
-RUN echo $OPENMPI_VERSION
-RUN echo $HDF5_VERSION
-RUN echo $NETCDF_VERSION
-RUN echo $NETCDF_FORTRAN_VERSION
+RUN echo $NCPUS \
+    && echo $OPENMPI_VERSION \
+    && echo $HDF5_VERSION \
+    && echo $NETCDF_VERSION \
+    && echo $NETCDF_FORTRAN_VERSION \
+    && echo PYTHON3_VERSION
 
+# set path variables
 ENV PATH=/usr/local/bin:$PATH
 ENV LD_LIBRARY_PATH=/usr/local/lib64:$LD_LIBRARY_PATH
 ENV PATH=/usr/local/hdf5/bin:$PATH
@@ -54,16 +57,15 @@ RUN apt-get update -y \
     libudunits2-0 \
     libudunits2-dev \
     udunits-bin \
-    htop \
-    python2.7 \
-    python-dev \
-    python-pip \
     python3 \
+    python3-dev \
     python3-pip \
     apt-utils \
     ftp \
     apt-transport-https \
-    locales
+    locales \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean all
 
     ## Install program to configure locales
 RUN dpkg-reconfigure locales && \
@@ -79,9 +81,25 @@ ENV LANGUAGE en_US.UTF-8
    ## check locales
 RUN locale -a
 
-   ## compile openMPI
-RUN echo "*** Compiling openMPI " ${OPENMPI_VERSION}
+## Add python3.6 and modules needed for tools
 RUN cd / \
+    && wget https://www.python.org/ftp/python/3.6.9/Python-3.6.9.tgz \
+    && tar xvf Python-3.6.9.tgz \
+    && cd Python-3.6.9 \
+    && ./configure --enable-optimizations \
+    && make -j4 \
+    && make altinstall \
+    && cd / \
+    && python3.6 --version \
+    && python3.6 -m pip install --upgrade pip \
+    && python3.6 -m pip install configparser numpy scipy matplotlib cftime netCDF4 xarray \
+    && cd / \
+    && rm -r Python-3.6.9 \
+    && rm Python-3.6.9.tgz
+
+   ## compile openMPI 
+RUN echo "*** Compiling openMPI " ${OPENMPI_VERSION} \
+    && cd / \
     && wget https://download.open-mpi.org/release/open-mpi/v2.1/openmpi-${OPENMPI_VERSION}.tar.gz \
     && tar -zxvf openmpi-${OPENMPI_VERSION}.tar.gz \
     && cd openmpi-${OPENMPI_VERSION} \
@@ -96,8 +114,8 @@ RUN cd / \
     && ldconfig
 
 ## Compile Expat XML parser
-RUN echo "*** Compiling Expat XML parser"
-RUN cd / \
+RUN echo "*** Compiling Expat XML parser" \
+    && cd / \
     && wget https://github.com/libexpat/libexpat/releases/download/R_2_2_6/expat-2.2.6.tar.bz2 \
     && tar -xvjf expat-2.2.6.tar.bz2 \
     && cd expat-2.2.6 \
@@ -109,8 +127,8 @@ RUN cd / \
     && rm expat-2.2.6.tar.bz2
 
 ## HDF5
-RUN echo "*** Compiling HDF5 " ${HDF5_VERSION}
-RUN cd / \
+RUN echo "*** Compiling HDF5 " ${HDF5_VERSION} \
+    && cd / \
     && mkdir -p /usr/local/hdf5 \
     && wget https://s3.amazonaws.com/hdf-wordpress-1/wp-content/uploads/manual/HDF5/HDF5_1_10_4/hdf5-1.10.4.tar.gz \
     && tar -zxvf hdf5-1.10.4.tar.gz \
@@ -125,8 +143,8 @@ RUN cd / \
     && rm hdf5-1.10.4.tar.gz
 
 ## netCDF
-RUN echo "*** Compiling netCDF " ${NETCDF_VERSION}
-RUN cd / \
+RUN echo "*** Compiling netCDF " ${NETCDF_VERSION} \
+    && cd / \
     && mkdir -p /usr/local/netcdf \
     && wget https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-c-4.6.2.tar.gz \
     && tar -zxvf netcdf-c-4.6.2.tar.gz \
@@ -140,8 +158,8 @@ RUN cd / \
     && export LD_LIBRARY_PATH=/usr/local/netcdf/lib 
 
 ## "Compile netCDF-Fortran"
-RUN echo "*** Compiling netCDF fortran " ${NETCDF_FORTRAN_VERSION}
-RUN wget https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-fortran-4.4.4.tar.gz \
+RUN echo "*** Compiling netCDF fortran " ${NETCDF_FORTRAN_VERSION} \
+    && wget https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-fortran-4.4.4.tar.gz \
     && tar -zxvf netcdf-fortran-4.4.4.tar.gz \
     && cd netcdf-fortran-4.4.4 \
     && export NCDIR=/usr/local/netcdf \
