@@ -102,7 +102,7 @@ RUN cd / \
     && cd / \
     && python3.6 --version \
     && python3.6 -m pip install --upgrade pip \
-    && python3.6 -m pip install configparser numpy scipy matplotlib cftime netCDF4 scipy.io xarray \
+    && python3.6 -m pip install configparser numpy scipy matplotlib cftime netCDF4 xarray \
     && cd / \
     && rm -r Python-3.6.9 \
     && rm Python-3.6.9.tgz
