@@ -2,7 +2,7 @@
 # Debian CTSM docker container
 # ----------------------------------------------------------------------
 
-FROM serbinsh/ctsm_containers:baseos-stable-gcc550
+FROM serbinsh/ctsm_containers:baseos-stable-gcc650
 MAINTAINER S.P. Serbin email: sserbin@bnl.gov
 
 ## For now this needs to be done so that CLM python build scripts can find os.user. BUT how do we then run with a different user?
@@ -11,7 +11,7 @@ MAINTAINER S.P. Serbin email: sserbin@bnl.gov
 ENV USER=clmuser
 RUN echo "export USER=clmuser" > /etc/environment
 
-ARG CTSM_BRANCH='release-clm5.0.18'
+ARG CTSM_BRANCH='release-clm5.0.27'
 RUN echo $CTSM_BRANCH
 
     ## temporary fix here, needs to be in baseOS.  setting gmake
@@ -31,6 +31,7 @@ RUN cd / \
     && chown clmuser tools
 
     ## Checkout CTSM model
+    # location of parameter file associated with each release version: ctsm/bld/namelist_files/namelist_defaults_clm4_5.xml
 RUN echo "*** Checkout CTSM model"
 RUN cd / \
     && git -c http.sslVerify=false clone -b ${CTSM_BRANCH} --single-branch --depth 1 https://github.com/ESCOMP/ctsm.git \
