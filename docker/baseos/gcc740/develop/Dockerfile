@@ -2,17 +2,18 @@
 # Debian baseOS docker container to use with CTSM builds
 # ----------------------------------------------------------------------
 
-FROM gcc:6.5
+FROM gcc:7.4
 MAINTAINER S.P. Serbin email: sserbin@bnl.gov
 
 RUN useradd -ms /bin/bash clmuser
 
 # Set a few variables that can be used to control the docker build
-ARG OPENMPI_VERSION=2.1.5
+ARG OPENMPI_VERSION=3.1.4
 ARG HDF5_VERSION=1.10.4
-ARG NETCDF_VERSION=4.6.2
-ARG NETCDF_FORTRAN_VERSION=4.4.4
+ARG NETCDF_VERSION=4.7.1
+ARG NETCDF_FORTRAN_VERSION=4.5.2
 ARG PYTHON3_VERSION=3.6.9
+
 
 # echo back options
 RUN echo $NCPUS \
@@ -63,6 +64,7 @@ RUN apt-get update -y \
     apt-utils \
     ftp \
     apt-transport-https \
+    openssl \
     locales \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean all
@@ -81,7 +83,7 @@ ENV LANGUAGE en_US.UTF-8
    ## check locales
 RUN locale -a
 
-## Add python3.6 and modules needed for tools
+## Add python3.7 and modules needed for tools
 RUN cd / \
     && wget https://www.python.org/ftp/python/${PYTHON3_VERSION}/Python-${PYTHON3_VERSION}.tgz \
     && tar xvf Python-${PYTHON3_VERSION}.tgz \
@@ -91,8 +93,9 @@ RUN cd / \
     && make altinstall \
     && cd / \
     && python3.6 --version \
+    && python3.6 -m pip install ssl \
     && python3.6 -m pip install --upgrade pip \
-    && python3.6 -m pip install configparser numpy scipy matplotlib cftime netCDF4 xarray \
+    && python3.6 -m pip install ssl configparser numpy scipy matplotlib cftime pandas netCDF4 xarray scitools3 \
     && cd / \
     && rm -r Python-${PYTHON3_VERSION} \
     && rm Python-${PYTHON3_VERSION}.tgz
@@ -100,7 +103,7 @@ RUN cd / \
    ## compile openMPI 
 RUN echo "*** Compiling openMPI " ${OPENMPI_VERSION} \
     && cd / \
-    && wget https://download.open-mpi.org/release/open-mpi/v2.1/openmpi-${OPENMPI_VERSION}.tar.gz \
+    && wget https://download.open-mpi.org/release/open-mpi/v3.1/openmpi-${OPENMPI_VERSION}.tar.gz \
     && tar -zxvf openmpi-${OPENMPI_VERSION}.tar.gz \
     && cd openmpi-${OPENMPI_VERSION} \
     && export PATH=/usr/local/bin:$PATH \
@@ -116,39 +119,39 @@ RUN echo "*** Compiling openMPI " ${OPENMPI_VERSION} \
 ## Compile Expat XML parser
 RUN echo "*** Compiling Expat XML parser" \
     && cd / \
-    && wget https://github.com/libexpat/libexpat/releases/download/R_2_2_6/expat-2.2.6.tar.bz2 \
-    && tar -xvjf expat-2.2.6.tar.bz2 \
-    && cd expat-2.2.6 \
+    && wget https://github.com/libexpat/libexpat/releases/download/R_2_2_9/expat-2.2.9.tar.gz \
+    && tar -xvjf expat-2.2.9.tar.gz \
+    && cd expat-2.2.9 \
     && ./configure \
     && make \
     && make install \
     && cd / \
-    && rm -r expat-2.2.6 \
-    && rm expat-2.2.6.tar.bz2
+    && rm -r expat-2.2.9 \
+    && rm expat-2.2.9.tar.gz
 
-## HDF5
+## HDF5 - use alternative source since main HDF5 source doesnt have useful download links
 RUN echo "*** Compiling HDF5 " ${HDF5_VERSION} \
     && cd / \
     && mkdir -p /usr/local/hdf5 \
-    && wget https://s3.amazonaws.com/hdf-wordpress-1/wp-content/uploads/manual/HDF5/HDF5_1_10_4/hdf5-1.10.4.tar.gz \
-    && tar -zxvf hdf5-1.10.4.tar.gz \
-    && cd hdf5-1.10.4 \
+    && wget https://s3.amazonaws.com/hdf-wordpress-1/wp-content/uploads/manual/HDF5/HDF5_1_10_4/hdf5-${HDF5_VERSION}.tar.gz \
+    && tar -zxvf hdf5-${HDF5_VERSION}.tar.gz \
+    && cd hdf5-${HDF5_VERSION} \
     && CC=mpicc ./configure --enable-fortran --enable-parallel --prefix=/usr/local/hdf5 \
     && make \
     && make install \
     && export PATH=/usr/local/hdf5/bin:$PATH \
     && export LD_LIBRARY_PATH=/usr/local/hdf5/lib/libhdf5 \
     && cd / \
-    && rm -r hdf5-1.10.4 \
-    && rm hdf5-1.10.4.tar.gz
+    && rm -r hdf5-${HDF5_VERSION} \
+    && rm hdf5-${HDF5_VERSION}.tar.gz
 
 ## netCDF
 RUN echo "*** Compiling netCDF " ${NETCDF_VERSION} \
     && cd / \
     && mkdir -p /usr/local/netcdf \
-    && wget https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-c-4.6.2.tar.gz \
-    && tar -zxvf netcdf-c-4.6.2.tar.gz \
-    && cd netcdf-c-4.6.2 \
+    && wget https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-c-${NETCDF_VERSION}.tar.gz \
+    && tar -zxvf netcdf-c-${NETCDF_VERSION}.tar.gz \
+    && cd netcdf-c-${NETCDF_VERSION} \
     && export H5DIR=/usr/local/hdf5 \
     && export NCDIR=/usr/local/netcdf \
     && CC=mpicc CPPFLAGS=-I${H5DIR}/include LDFLAGS=-L${H5DIR}/lib ./configure --enable-parallel-tests --prefix=${NCDIR} \
@@ -159,9 +162,9 @@ RUN echo "*** Compiling netCDF " ${NETCDF_VERSION} \
 
 ## "Compile netCDF-Fortran"
 RUN echo "*** Compiling netCDF fortran " ${NETCDF_FORTRAN_VERSION} \
-    && wget https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-fortran-4.4.4.tar.gz \
-    && tar -zxvf netcdf-fortran-4.4.4.tar.gz \
-    && cd netcdf-fortran-4.4.4 \
+    && wget https://www.unidata.ucar.edu/downloads/netcdf/ftp/netcdf-fortran-${NETCDF_FORTRAN_VERSION}.tar.gz \
+    && tar -zxvf netcdf-fortran-${NETCDF_FORTRAN_VERSION}.tar.gz \
+    && cd netcdf-fortran-${NETCDF_FORTRAN_VERSION} \
     && export NCDIR=/usr/local/netcdf \
     && export NFDIR=/usr/local/netcdf \
     && CPPFLAGS=-I${NCDIR}/include LDFLAGS=-L${NCDIR}/lib ./configure --prefix=${NFDIR} --enable-parallel-tests \
@@ -170,9 +173,9 @@ RUN echo "*** Compiling netCDF fortran " ${NETCDF_FORTRAN_VERSION} \
 
 ## Final cleanup
 RUN cd / \
-    && rm -r netcdf-c-4.6.2 \
-    && rm netcdf-c-4.6.2.tar.gz \
-    && rm -r netcdf-fortran-4.4.4 \
-    && rm netcdf-fortran-4.4.4.tar.gz
+    && rm -r netcdf-c-${NETCDF_VERSION} \
+    && rm netcdf-c-${NETCDF_VERSION}.tar.gz \
+    && rm -r netcdf-fortran-${NETCDF_FORTRAN_VERSION} \
+    && rm netcdf-fortran-${NETCDF_FORTRAN_VERSION}.tar.gz
 
 ### EOF
