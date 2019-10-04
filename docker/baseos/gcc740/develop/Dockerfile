@@ -93,7 +93,7 @@ RUN cd / \
     && make altinstall \
     && cd / \
     && python3.6 --version \
-    && python3.6 -m pip install ssl \
+    #&& python3.6 -m pip install ssl \
     && python3.6 -m pip install --upgrade pip \
     && python3.6 -m pip install ssl configparser numpy scipy matplotlib cftime pandas netCDF4 xarray scitools3 \
     && cd / \
