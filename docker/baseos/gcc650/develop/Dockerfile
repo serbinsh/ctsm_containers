@@ -64,6 +64,7 @@ RUN apt-get update -y \
     apt-utils \
     ftp \
     apt-transport-https \
+    openssl \
     locales \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean all
@@ -82,7 +83,7 @@ ENV LANGUAGE en_US.UTF-8
    ## check locales
 RUN locale -a
 
-## Add python3.6 and modules needed for tools
+## Add python3.7 and modules needed for tools
 RUN cd / \
     && wget https://www.python.org/ftp/python/${PYTHON3_VERSION}/Python-${PYTHON3_VERSION}.tgz \
     && tar xvf Python-${PYTHON3_VERSION}.tgz \
@@ -92,8 +93,9 @@ RUN cd / \
     && make altinstall \
     && cd / \
     && python3.7 --version \
+    && python3.7 -m pip install ssl \
     && python3.7 -m pip install --upgrade pip \
-    && python3.7 -m pip install configparser numpy scipy matplotlib cftime netCDF4 xarray \
+    && python3.7 -m pip install ssl configparser numpy scipy matplotlib cftime netCDF4 xarray \
     && cd / \
     && rm -r Python-${PYTHON3_VERSION} \
     && rm Python-${PYTHON3_VERSION}.tgz
